@@ -1,0 +1,55 @@
+Representative: Good morning, and thank you for calling MD Bank. My name is Sarah. How can I assist you today?
+
+Customer: Hi Sarah, my name is Alex. This is my first time calling MD Bank. I’m looking to get some information about mortgages. I’ve never had one before, and honestly, I don’t really know how it all works.
+
+Representative: Thank you for reaching out, Alex. I’m happy to walk you through the process and answer any questions you have. Since this is your first time, let’s start with the basics. A mortgage is essentially a loan that you use to purchase a home, and you repay it over time, usually with interest. Does that make sense so far?
+
+Customer: Yeah, that makes sense. So, how do I know how much I can borrow?
+
+Representative: Great question! The amount you can borrow depends on a few factors, such as your income, your expenses, your credit history, and the size of your down payment. Typically, we recommend getting pre-approved for a mortgage first. This gives you a clear idea of how much you qualify for and helps you set a budget when shopping for a home.
+
+Customer: Pre-approved? What’s involved in that process?
+
+Representative: During pre-approval, we review your financial situation. You’ll need to provide some documents, like proof of income, recent pay stubs, tax returns, and information about any debts or assets you have. Based on this, we determine the loan amount you qualify for, your potential interest rate, and your estimated monthly payments.
+
+Customer: I see. Is there a fee for getting pre-approved?
+
+Representative: No, pre-approval is free, and it doesn’t obligate you to go ahead with the mortgage. It’s just a way to give you a clearer picture of your options.
+
+Customer: That’s good to know. What about the interest rate? How does that work?
+
+Representative: Interest rates can vary based on the type of mortgage you choose. There are two main types: fixed-rate and variable-rate mortgages. With a fixed-rate mortgage, your interest rate stays the same throughout the term, which provides stability. With a variable-rate mortgage, your rate can fluctuate based on the market, which might offer savings when rates are low but comes with more risk.
+
+Customer: Hmm, okay. And how long is the term usually?
+
+Representative: In Canada, mortgage terms are typically between 1 and 5 years, though some go up to 10 years. The term is the length of time your agreement with the bank is in effect. At the end of the term, you can renew, refinance, or pay off the mortgage. The amortization period, on the other hand, is the total time it takes to pay off the loan, usually 25 or 30 years.
+
+Customer: Got it. And the down payment—how much do I need?
+
+Representative: For most homes, the minimum down payment is 5% of the purchase price. However, if the home costs more than $500,000, the requirement increases. Homes over $1,000,000 require at least 20%. If your down payment is less than 20%, you’ll need mortgage insurance, which protects the lender.
+
+Customer: Mortgage insurance? How much does that cost?
+
+Representative: It varies depending on the size of your down payment and the loan amount. The premium is typically added to your mortgage, so you don’t have to pay it upfront.
+
+Customer: This is a lot to take in, but it’s starting to make sense.
+
+Representative: I understand it can feel overwhelming at first. Would you like me to send you some information by email? I can include a checklist for pre-approval and details about our mortgage options.
+
+Customer: That would be really helpful.
+
+Representative: Great! Could I get your email address?
+
+Customer: Sure, it’s alexsmith@gmail.com.
+
+Representative: Thanks, Alex. I’ve got that noted. Do you have any other questions for now?
+
+Customer: Not at the moment, but I might call back once I’ve had time to go through everything.
+
+Representative: Absolutely. Feel free to reach out anytime. We’re here to help. Have a great day, Alex!
+
+Customer: Thanks, Sarah. You too.
+
+Representative: Goodbye!
+
+Customer: Bye!

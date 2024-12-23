@@ -1,0 +1,53 @@
+Representative: Good morning, this is James from MD Bank customer support. How can I assist you today?
+
+Customer: Hi, um, it’s me again… Maria Santos. I… I still can’t… log in to the app. I… I don’t know what’s wrong.
+
+Representative: Oh, hi again, Maria. I’m sorry to hear you’re still having trouble. Let’s figure this out. Are you using the new password we set up earlier, “Winter2024”?
+
+Customer: Um, yes… I think so? But… it’s just not working. I… I keep getting the same message. “Invalid login credentials.”
+
+Representative: Alright, let’s start fresh. Can you confirm if you’re entering the email associated with your account? Sometimes it helps to double-check for typos.
+
+Customer: Oh… uh… I think so? I… I used the one I always use… maria.santos…@gmail.com?
+
+Representative: Hmm. The email on file is maria.santos85@gmail.com. Could that be the issue?
+
+Customer: Oh… um, maybe? I… I don’t know. I… should I… try that one?
+
+Representative: Yes, please try logging in with that email and the password “Winter2024.” Let me know what happens.
+
+Customer: Okay, um… hold on… uh… oh, it says… uh… now it says “Account locked.”
+
+Representative: (pauses) Alright, it seems the system locked your account again due to multiple failed attempts. I’ll unlock it for you. Hold on… there we go. Try again now.
+
+Customer: Uh, okay… um… still doesn’t work. I… I don’t know what I’m doing wrong.
+
+Representative: Maria, let’s confirm your password again. Can you carefully re-enter “Winter2024”? Make sure the “W” is capitalized and there are no spaces before or after it.
+
+Customer: Um, yes… okay… uh, I did that… still… still nothing. It’s the same error.
+
+Representative: (exhales) Alright. Let’s reset your password again. I’ll send another verification code. Let me know when you get it.
+
+Customer: Oh… okay… um… wait… okay, I… I have it. It’s 734920.
+
+Representative: Got it. Let me update that for you. Alright, I’ve reset the password to “Spring2024.” Try logging in now with that password.
+
+Customer: Um… okay… hold on… oh… um, still doesn’t… work. I… I’m sorry… I don’t… know… what I’m doing wrong.
+
+Representative: Maria, I’ve walked you through all the steps here. Are you sure you’re following the instructions exactly? Let’s try one more time.
+
+Customer: I… I think I am? I… I’m really sorry, I… I’m not good at… this kind of thing. Can you… just fix it?
+
+Representative: Maria, I’m trying my best to help you, but this requires you to log in yourself. Let’s do this step-by-step again. Open the app, enter your email maria.santos85@gmail.com, and type in Spring2024. What happens?
+
+Customer: Um… okay… I… I’m doing that… oh… uh, now it says “Too many attempts.”
+
+Representative: Alright, Maria. At this point, I’ll need to escalate this to our technical team. They can look deeper into your account settings. You’ll get a callback within 24 to 48 hours. Does that work?
+
+Customer: Oh… um… okay, I guess. I’m sorry… I… I just… don’t understand this stuff.
+
+Representative: It’s alright, Maria. Someone will reach out to resolve this. Is there anything else?
+
+Customer: No… I… I guess that’s it. Thank you…
+
+Representative: You’re welcome. Have a good day. Goodbye.

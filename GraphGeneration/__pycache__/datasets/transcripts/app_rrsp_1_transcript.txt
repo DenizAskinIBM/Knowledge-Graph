@@ -1,0 +1,67 @@
+Representative: Good morning, this is James from MD Bank customer support. How can I assist you today?
+
+Customer: Hi, um, yeah, I… I’m trying to log in to the app, but it’s… it’s not working. I’m getting… I think it’s an error message.
+
+Representative: I see. I’m sorry to hear about that, but I’m here to help. Could you tell me the exact message you’re seeing?
+
+Customer: Uh, sure, let me just… hold on. Okay, it says, “Invalid login credentials.” I’ve… I’ve reset my password twice already today.
+
+Representative: Thank you for sharing that. It sounds like the system might have locked your account temporarily for security reasons. Let me verify some information to unlock it for you. Can you confirm your full name and the last four digits of your account number?
+
+Customer: Sure. My name is Maria Santos, and the last four digits are 4290.
+
+Representative: Thank you, Maria. Let me quickly check your account… Alright, it looks like your account is indeed locked because of multiple login attempts. I’ll send a verification code to your email. Once you receive it, we’ll reset your access. Does that work?
+
+Customer: Uh, yeah, I guess that’s fine.
+
+Representative: Great. I’ve sent the code to the email on file. Could you please check and let me know when you’ve got it?
+
+Customer: Oh, okay… um, give me a minute…. Hmm… okay, yeah, I see it. It’s… 458329.
+
+Representative: Perfect. Let me input that code here… Alright, your account is now unlocked. Let’s go ahead and reset your password to something secure that you’ll remember. Could you please tell me a new password?
+
+Customer: Um, I… I think… can it be something like… uh, let’s go with “Winter2024…” is that okay?
+
+Representative: That’s a great choice. I’ve updated it for you. You should now be able to log in using your new password. Could you try that while we’re on the call?
+
+Customer: Oh, uh, sure. Let me… hold on, okay… logging in… and… yes, I’m in. Finally. Thanks.
+
+Representative: Glad we got that sorted out for you, Maria. Is there anything else I can help you with today?
+
+Customer: Actually, uh… yes. I, um, have some questions about my RRSP. I… I don’t really… uh, understand how it works, and I think I need to… contribute more, right?
+
+Representative: Of course. I’d be happy to help with that. Do you have specific questions, or would you like me to give you a general overview?
+
+Customer: Um… I guess a bit of both? I mean, I know it’s for retirement, but… like, how much should I put in? And when? Is there a… a deadline or something?
+
+Representative: Good questions. So, an RRSP, or Registered Retirement Savings Plan, helps you save for retirement while reducing your taxable income for the year you contribute. The contribution limit for 2024 is 18% of your earned income from the previous year, up to a maximum of $31,560, whichever is lower.
+
+Customer: Uh, okay… I think I earned… uh, $45,000 last year. So… how much does that mean?
+
+Representative: For $45,000, 18% would be $8,100. That’s your contribution limit for the year, assuming you haven’t made any other contributions. You can check your specific limit on your CRA Notice of Assessment or through your CRA My Account.
+
+Customer: Oh… uh, I don’t think I’ve ever… uh, done that. So, should I just put in… $8,000 now? Or…
+
+Representative: It’s definitely an option to contribute now, but it depends on your financial situation. You can contribute in smaller amounts throughout the year, too. The key is to stay within your limit. Remember, the deadline for contributions to count for the 2024 tax year is March 1, 2025.
+
+Customer: March 1… okay. And… uh, do I… like, do I have to invest it somewhere? Or does it just… sit there?
+
+Representative: Another great question. You can invest your RRSP funds in a variety of options like mutual funds, stocks, GICs, or even just keep them in a high-interest savings account within your RRSP. It depends on your risk tolerance and financial goals. Would you like me to connect you with an MD Financial Advisor to explore your options?
+
+Customer: Oh, um, maybe? But… I don’t really… understand stocks and stuff. Is it… is it safe?
+
+Representative: Absolutely, Maria. If you’re new to investing, starting with something low-risk like GICs or a balanced mutual fund could be a great option. Our financial advisors specialize in tailoring investments to meet individual comfort levels and goals.
+
+Customer: Okay… um, yeah. I think… I might need that… advisor. How do I… set that up?
+
+Representative: I can help with that. I’ll schedule a callback from one of our advisors at a time that works for you. When would you be available?
+
+Customer: Uh, maybe… Thursday? Afternoon?
+
+Representative: Thursday afternoon works perfectly. I’ll book the call and email you the confirmation. Anything else you’d like me to help with today?
+
+Customer: No, I think… that’s it. Thanks for… explaining all that.
+
+Representative: You’re welcome, Maria. I know it can feel a bit overwhelming, but you’re taking the right steps. Have a great day!
+
+Customer: Thanks, you too. Bye.

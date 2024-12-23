@@ -1,0 +1,43 @@
+Agent: Good morning, thank you for calling Montreal Dominion Bank. My name is Emily. How can I assist you today?
+
+Client: Hi, this is Sarah speaking. I’m really frustrated right now. I have a variable-rate mortgage, and the interest rate went down last night. I was expecting my payments to go down as well, but they didn’t. What’s going on?
+
+Agent: I’m sorry to hear you’re feeling frustrated, Sarah. I’d be happy to look into this for you and explain what’s happening. Let’s start by verifying some details about your mortgage. Can I confirm your mortgage account number and a few other details for security purposes?
+
+Client: Sure, my mortgage account number is 12345678.
+
+Agent: Thank you. And can you confirm your date of birth and the postal code associated with the account?
+
+Client: It’s January 15, 1985, and the postal code is H3Z 1A2.
+
+Agent: Perfect, thank you for that. I’ve accessed your account. Before I explain, I want to assure you that I’ll do my best to clarify everything. Variable-rate mortgages can sometimes be a bit tricky.
+
+Client: Well, I hope so, because this is really confusing. I thought lower rates meant lower payments.
+
+Agent: I completely understand how it can seem that way. With your specific variable-rate mortgage, your payments are actually structured a bit differently. While the interest rate affects how much of your payment goes toward the principal versus interest, the total payment amount itself doesn’t always change immediately when rates fluctuate.
+
+Client: What do you mean?
+
+Agent: Let me break it down. In your case, you have what’s called a fixed payment variable-rate mortgage. That means your monthly payment amount remains constant, even as the interest rate changes. When rates go down, a larger portion of your payment goes toward reducing the principal balance, while less goes toward paying interest.
+
+Client: So, my payment doesn’t change at all?
+
+Agent: That’s correct. The benefit is that you’ll pay down your mortgage faster when rates decrease because more of your payment goes toward the principal.
+
+Client: Oh, I see. But if that’s the case, why wasn’t this explained to me when I signed up for this mortgage?
+
+Agent: I understand how you feel, Sarah, and I apologize if that wasn’t made clear during the initial setup. It’s definitely something we try to explain to all our clients, but I know these details can sometimes get lost. If you’d like, I can also arrange for a follow-up meeting with one of our mortgage specialists to review your options.
+
+Client: No, I think I understand now. It’s just a lot to take in.
+
+Agent: I completely get that. To recap, your payments aren’t decreasing, but you’re actually benefiting by paying off your mortgage faster whenever rates drop. And if you’d like, I can send you an updated amortization schedule so you can see how your balance is being paid down.
+
+Client: That would be helpful, thank you.
+
+Agent: You’re very welcome. Is there anything else I can assist you with today?
+
+Client: No, that clears things up. Thanks for taking the time to explain everything.
+
+Agent: It’s my pleasure, Sarah. Thank you for choosing MD Bank. Have a great day!
+
+Client: You too.

@@ -1,0 +1,55 @@
+Representative: Good afternoon, Alex. This is Sarah from MD Bank. How can I assist you today?
+
+Customer: Hi Sarah, I have a problem. I just noticed that my first mortgage payment is higher than what we discussed. It’s way more than I expected, and I don’t understand why.
+
+Representative: I’m sorry to hear that, Alex. Let me take a look at your account and see what’s going on. Can you give me a moment to pull up your details?
+
+Customer: Sure.
+
+Representative: Thank you. Okay, I see here that your mortgage payment includes the principal, interest, and the mortgage insurance premium that we talked about during our last conversation.
+
+Customer: Wait a minute. You’re saying this extra charge is because of the mortgage insurance?
+
+Representative: That’s correct. During our last call, we discussed that mortgage insurance would be required because your down payment was less than 20% of the purchase price. The premium was added to your total mortgage amount, which increased your monthly payment slightly.
+
+Customer: I remember agreeing to the insurance, but I didn’t realize it would make my payments higher. You didn’t explain that part clearly.
+
+Representative: I understand your frustration, Alex, and I truly apologize if there was any misunderstanding. My intention was to provide you with all the details, but I can see how this might not have been as clear as it should have been.
+
+Customer: Yeah, because now I feel blindsided. I budgeted for what we talked about before, and this higher payment is throwing everything off.
+
+Representative: I hear you, Alex, and I want to help. Here’s what we can do: we can review your options to adjust your mortgage and find a way to make this more manageable for you. For example, we might be able to extend the amortization period, which would lower your monthly payments.
+
+Customer: Extending the amortization? How would that work?
+
+Representative: Essentially, it would spread the loan repayment over a longer period—say, 30 years instead of 25 years. This would reduce the amount you owe each month, though it does mean you’ll pay more in interest over time.
+
+Customer: Hmm, I don’t love the idea of paying more interest, but lower payments would help me right now. Are there other options?
+
+Representative: Another option could be to reassess your budget and see if there are any areas where we could provide financial advice or support. Additionally, if you’d prefer, we can review whether you’re eligible to refinance or make adjustments to your loan down the line.
+
+Customer: I don’t know. This whole thing just feels like a mess now.
+
+Representative: I completely understand, Alex. This is a big financial commitment, and it’s important that you feel comfortable. If you’d like, we can set up an appointment to go over everything in detail, step by step, and see if there’s a solution that works better for you.
+
+Customer: I think that might be a good idea. I just don’t want to feel like I’m getting caught off guard again.
+
+Representative: That’s completely fair, and I’m here to make sure you’re fully informed moving forward. Let’s schedule some time to talk. I’ll also send you a detailed breakdown of your mortgage, including the impact of the insurance, so you can review it before we meet.
+
+Customer: Okay, let’s do that.
+
+Representative: Great. Does next Tuesday at 3 PM work for you?
+
+Customer: Yeah, that should work.
+
+Representative: Perfect. I’ll send you a confirmation email with all the details. In the meantime, if you have any other questions or concerns, feel free to call me directly.
+
+Customer: Alright. Thanks, Sarah.
+
+Representative: You’re welcome, Alex. I’ll do my best to help resolve this for you. Have a good day.
+
+Customer: Thanks. You too.
+
+Representative: Bye for now.
+
+Customer: Bye.
