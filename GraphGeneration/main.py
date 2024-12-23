@@ -20,7 +20,6 @@ mortgage_loan_transcript_3=''.join(f.read().splitlines())
 
 transcripts=[mortgage_loan_transcript_1,mortgage_loan_transcript_2,mortgage_loan_transcript_3]
 list_of_graphs=[]
-
 if __name__ == '__main__':
     # for x in range(0,len(transcripts)):
     #     # Create Knowledge Graphs of each text

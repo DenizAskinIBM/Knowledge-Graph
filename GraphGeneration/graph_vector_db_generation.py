@@ -8,7 +8,7 @@ from neo4j_graphrag.embeddings import OpenAIEmbeddings
 from neo4j_graphrag.experimental.pipeline.kg_builder import SimpleKGPipeline
 
 from neo4j_graphrag.indexes import create_vector_index, upsert_vector, drop_index_if_exists
-
+from neo4j_graphrag.experimental.components.text_splitters.fixed_size_splitter import FixedSizeSplitter
 import os
 from dotenv import load_dotenv
 # Load environment variables from .env file
@@ -21,7 +21,7 @@ openai_apikey=os.getenv("OPENAI_API_KEY")
 
 INDEX_NAME = "transcript-1"
 
-# ## Connect to the Neo4j database
+## Connect to the Neo4j database
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
 # Create an Embedder object
@@ -42,6 +42,7 @@ kg_builder = SimpleKGPipeline(
     llm=llm,
     driver=driver,
     embedder=embedder,
+    text_splitter=FixedSizeSplitter(chunk_size=1000, chunk_overlap=100),
     on_error="IGNORE",
     from_pdf=False,
 )
