@@ -1,0 +1,65 @@
+Representative: Good morning, Alex. Welcome back to MD Bank. This is Sarah speaking. How can I assist you today?
+
+Customer: Hi Sarah, it’s Alex again. We spoke a few weeks ago about mortgages. I’ve done my research, and I’m ready to move forward with the loan.
+
+Representative: That’s great to hear, Alex! Congratulations on this big step. I’d be happy to guide you through the next steps. Have you found a property, or are you still in the process?
+
+Customer: Yes, I’ve found a property. It’s a townhouse for $450,000.
+
+Representative: That’s exciting! For a property at that price, have you finalized your down payment amount?
+
+Customer: Yes, I’ll be putting down $30,000.
+
+Representative: Perfect. That’s just over 6%, so you’ll need mortgage insurance since the down payment is under 20%. Have you decided if you’d like to include mortgage insurance as part of your loan?
+
+Customer: Yes, I think I’d like to go ahead with it.
+
+Representative: Excellent. Mortgage insurance helps protect the lender, and the premium is added to your mortgage, so you won’t need to pay it upfront. Based on your purchase price and down payment, I can estimate the premium. Would you like me to calculate that for you?
+
+Customer: Sure, that’d be helpful.
+
+Representative: Okay, so for a $450,000 property with a $30,000 down payment, your loan amount is $420,000. The insurance premium rate is approximately 3.1%, which means the premium will be about $13,020. This will bring your total mortgage to $433,020.
+
+Customer: I see. And how does this affect my monthly payments?
+
+Representative: Let me calculate that for you. Are you still interested in a 25-year amortization with a 5-year fixed-rate term?
+
+Customer: Yes, I think that works for me.
+
+Representative: Great. At our current fixed rate of 5.25%, your monthly payment would be approximately $2,603, including the mortgage insurance premium.
+
+Customer: Okay, that sounds manageable.
+
+Representative: Perfect. To proceed, I’ll need to finalize your application and submit it for approval. Since we already discussed pre-approval, we should have most of your information on file. I’ll just confirm a few details with you now.
+
+Customer: Sure, go ahead.
+
+Representative: First, has there been any change in your employment or income since we last spoke?
+
+Customer: No, everything’s the same.
+
+Representative: Great. And the townhouse you’re purchasing—do you have a signed purchase agreement?
+
+Customer: Yes, I can email it to you.
+
+Representative: Perfect. Please send it to mortgages@md.ca, and I’ll attach it to your file. Once we have everything, we can move forward with the final approval.
+
+Customer: Sounds good. How long does the approval process usually take?
+
+Representative: Typically, it takes about 3 to 5 business days. I’ll keep you updated throughout the process.
+
+Customer: That’s great. Is there anything else I need to do right now?
+
+Representative: Just send over the purchase agreement, and we’ll handle the rest. Once your mortgage is approved, we’ll schedule a meeting to go over the terms and conditions in detail before you sign.
+
+Customer: Got it. Thanks, Sarah.
+
+Representative: You’re welcome, Alex. Congratulations again on this exciting step! If you have any questions in the meantime, don’t hesitate to reach out.
+
+Customer: Will do. Thanks for your help.
+
+Representative: My pleasure. Have a great day!
+
+Customer: You too. Bye!
+
+Representative: Goodbye!

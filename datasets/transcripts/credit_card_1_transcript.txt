@@ -1,0 +1,77 @@
+Representative: Thank you for calling MD Bank. My name is Sarah, and I’ll be assisting you today. May I have your full name to better assist you?
+
+Customer: Sure, it’s Daniel Roberts.
+
+Representative: Thank you, Mr. Roberts. For security purposes, could you please confirm your date of birth and the last four digits of your MD Bank account number?
+
+Customer: My date of birth is May 14, 1987, and the last four digits are 5634.
+
+Representative: Perfect, thank you for that information. How can I help you today?
+
+Customer: I’m looking to get a new credit card and wanted some help choosing the right one.
+
+Representative: Absolutely, I’d be happy to assist. To start, could you tell me a little more about what you’re looking for in a credit card? For example, are you looking for one with cashback, travel rewards, or maybe a lower interest rate?
+
+Customer: I think cashback would be good. I don’t travel that often, so a travel card isn’t necessary.
+
+Representative: Got it. MD Bank offers a few cashback options, so I’ll outline them for you. The first is our MD Cashback Basic Card, which has no annual fee. It offers 1% cashback on all purchases. Then we have the MD Cashback Plus Card, which has a $99 annual fee but offers 2% cashback on groceries and gas, and 1% on everything else.
+
+Customer: Hmm, okay. I don’t want to spend too much on an annual fee, but I do spend a lot on groceries.
+
+Representative: That’s helpful to know. If you shop at grocery stores frequently, the MD Cashback Plus Card could help maximize your rewards. If you prefer not to pay any fees, the Basic Card would still provide 1% cashback on all your purchases.
+
+Customer: Makes sense. What about interest rates?
+
+Representative: Good question. Both cards have an interest rate of 19.99% on purchases and 21.99% on cash advances. However, if you tend to pay off your balance in full every month, the interest rate wouldn’t come into play. Do you typically carry a balance?
+
+Customer: No, I always pay off my balance in full.
+
+Representative: That’s great! In that case, the interest rate won’t be a major factor for you. The decision really comes down to whether the higher cashback rate on groceries and gas justifies the $99 annual fee.
+
+Customer: Okay. Is there a way to calculate how much cashback I’d earn?
+
+Representative: Definitely. Let’s do a quick example. On average, how much do you spend on groceries and gas each month?
+
+Customer: Around $800 on groceries and maybe $150 on gas.
+
+Representative: Perfect. With the MD Cashback Plus Card, you’d earn 2% cashback on those categories, which equals $19 per month or $228 annually. After subtracting the $99 annual fee, you’d still come out ahead by $129. The Basic Card would give you 1% cashback on those purchases, which would be $11.50 per month or $138 annually.
+
+Customer: Hmm, okay. That makes sense. So the Plus Card would be better for me based on those numbers.
+
+Representative: Exactly. And one more thing to note—both cards come with additional benefits like purchase protection and extended warranties. The Plus Card also includes some additional perks, like roadside assistance.
+
+Customer: I see. What’s the process for applying for the Plus Card?
+
+Representative: It’s very straightforward. I can start the application for you now over the phone, or you can apply online through your MD Bank online banking account. It usually takes about 5 to 10 minutes.
+
+Customer: Let’s do it over the phone.
+
+Representative: Great! I’ll just need to ask a few questions to get started. Can you confirm your current address?
+
+Customer: Sure, it’s 123 Maple Street, Montreal, Quebec, H3G 1T2.
+
+Representative: Thank you. And are you currently employed?
+
+Customer: Yes, I work as a software developer.
+
+Representative: Excellent. Can you provide an estimate of your annual income?
+
+Customer: It’s $85,000.
+
+Representative: Perfect, thank you. Based on your income and credit profile, you should have no trouble qualifying. I’ll submit the application now. Would you like your card sent to the address you just provided?
+
+Customer: Yes, please.
+
+Representative: Great. Your application has been submitted, and you should receive a confirmation email shortly. Once approved, the card will arrive in 7 to 10 business days.
+
+Customer: Sounds good. Is there anything else I need to do?
+
+Representative: Nope, that’s all for now. Once you receive the card, you’ll just need to activate it, which you can do through our app, online, or by calling us. Do you have any other questions?
+
+Customer: No, I think that covers it.
+
+Representative: Perfect. Thank you for choosing MD Bank, Mr. Roberts. Have a great day!
+
+Customer: Thanks, you too.
+
+Representative: Goodbye!
