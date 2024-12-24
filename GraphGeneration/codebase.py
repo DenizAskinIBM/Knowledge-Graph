@@ -27,6 +27,11 @@ def graph_generation(text, prompt, llm):
     graph = prompt_and_graph.invoke({"input": text})
     return graph
 
+def graph_correction(text, prompt, llm):
+    prompt_and_graph = prompt | llm
+    graph = prompt_and_graph.invoke({"knowledge_graph": text})
+    return graph
+
 def graph_comparison(text, prompt, llm, graph1, graph2):
     prompt_and_model = prompt | llm
     response_chunking = prompt_and_model.invoke({"text": text, "knowledge_graph_1": graph1, "knowledge_graph_2": graph2})
@@ -52,7 +57,7 @@ def retrieve_graph(knowledge_graph):
     """
     return str(knowledge_graph.query(query))
 
-def graph_query(question, prompt, knowledge_graph, llm):
+def single_graph_query(question, prompt, knowledge_graph, llm):
     prompt_and_graph = prompt | llm
     answer = prompt_and_graph.invoke({"question": question, "knowledge_graph": knowledge_graph})
     return answer
@@ -62,22 +67,42 @@ def multiple_graph_query(question, prompt, llm, knowledge_graphs):
     graph = prompt_and_graph.invoke({"question": question, "knowledge_graphs": knowledge_graphs})
     return graph
 
-def graph_generation_with_review(llm, text, prompt_chunking, prompt_generation, knowledge_graph, print_chunks):
+def ask_question(prompt, llm, knowledge_graphs):
+    question = input("Your question (type 'exit' to quit): ").strip()
+    if question.lower() == 'exit':
+        return
+    else:
+        answer = multiple_graph_query(question, prompt, llm, knowledge_graphs).content
+        print(answer)
+        print()
+    ask_question(prompt, llm, knowledge_graphs)  # Recursively call the function again
+
+def graph_generation_with_review(llm, text, prompt_chunking, prompt_generation, prompt_correction, knowledge_graph, print_chunks, use_langchain_transformer):
     print("GENERATING GRAPH")
     for x in chunking(text, prompt_chunking, llm).chunk:
         if(print_chunks):
             print(x.strip())
-        if(llm!=llm_chat_gpt):
-            response=graph_generation(x.strip(), prompt_generation, llm).content
-            knowledge_graph.add_graph_documents([eval(response)])
-        else:
+        if(use_langchain_transformer):
             documents = [Document(page_content=x.strip())]
             response=llm_transformer.convert_to_graph_documents(documents)
             knowledge_graph.add_graph_documents(response)
-        # reviewed_response=reviewing(x.strip(), prompt_graph_review_llama, response, llm).content
-        # if(reviewed_response=="DONE"):
-        #     reviewed_response=response
+        else:
+            response=graph_generation(x.strip(), prompt_generation, llm).content
+            response=graph_correction(response, prompt_correction, llm).content
+            knowledge_graph.add_graph_documents([eval(response)])
     knowledge_graph.refresh_schema()
     knowledge_graph_schema = knowledge_graph.get_structured_schema
-    print("GRAPH Schema:", knowledge_graph_schema)
     return knowledge_graph, knowledge_graph_schema
+
+def main(transcripts, llm, prompt_chunking_llama, prompt_graph_generation_llama, prompt_correction, knowledge_graph, print_chunks, use_langchain_transformer):
+    for x in range(0,len(transcripts)):
+        # Create Knowledge Graphs of each text
+        generated_graph, graph_schema=graph_generation_with_review(llm, transcripts[x], 
+                                                                   prompt_chunking_llama, prompt_graph_generation_llama, 
+                                                                   prompt_correction, knowledge_graph, 
+                                                                   print_chunks,
+                                                                   use_langchain_transformer)
+        print()
+        print(f"Graph Schema {x+1}:",graph_schema)
+        print()
+    return retrieve_graph(generated_graph)
