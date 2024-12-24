@@ -9,3 +9,4 @@ langchain_openai
 webbrowser
 pypdf
 fsspec
+langchain_neo4j

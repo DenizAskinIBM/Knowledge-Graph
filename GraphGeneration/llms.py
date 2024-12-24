@@ -1,7 +1,6 @@
 import os
 from langchain_openai import ChatOpenAI
 from langchain_ibm import ChatWatsonx
-from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 load_dotenv("./.env")
 
@@ -11,7 +10,7 @@ project_id=os.getenv("PROJECT_ID")
 openai_apikey=os.getenv("OPENAI_API_KEY")
 
 model_id_llama="meta-llama/llama-3-405b-instruct"
-model_id_mistral="mistralai/mistral-large"
+model_id_mistral="mistralai/mixtral-8x7b-instruct-v01"
 model_id_code="ibm/granite-34b-code-instruct"
 model_id_granite="ibm/granite-3-8b-instruct"
 
