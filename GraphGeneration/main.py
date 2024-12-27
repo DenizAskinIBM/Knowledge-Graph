@@ -2,8 +2,7 @@ from texts import text_eu, text_osfi
 from llms import llm_code, llm_chat_gpt, llm_granite, llm_llama, llm_mistral
 from codebase import graph_generation_with_review, retrieve_graph, multiple_graph_query, ask_question, main, display_graph
 from prompts import *
-from langchain_community.graphs import Neo4jGraph
-
+from langchain_neo4j import Neo4jGraph
 ## Initialize Neo4J Graph
 graph = Neo4jGraph()
 
