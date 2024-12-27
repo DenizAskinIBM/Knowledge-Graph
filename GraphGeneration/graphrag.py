@@ -5,6 +5,8 @@ from codebase import display_graph
 from neo4j_graphrag.retrievers import VectorRetriever
 from dotenv import load_dotenv
 from neo4j_graphrag.embeddings import OpenAIEmbeddings
+from llms import llm_chat_gpt
+import ast
 import os
 # Load environment variables from .env file
 load_dotenv()
@@ -16,8 +18,8 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 ## Connect to the Neo4j database
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 # Create an Embedder object
-embedder = OpenAIEmbeddings(model="text-embedding-3-large")
-index_name = "all-transcripts-llama"
+embedder = OpenAIEmbeddings(model="text-embedding-ada-002")
+index_name = "financial-transcripts"
 
 def graphrag(index_name, embedder):
 
@@ -31,15 +33,13 @@ def graphrag(index_name, embedder):
     rag = GraphRAG(retriever=retriever, llm=llm)
 
     # Query the graph
-    query_text = "How many conversations does Sarah and the representative have?"
+    query_text = "Should I verify the cusomter's identification??"
     response = rag.search(query_text=query_text, retriever_config={"top_k": 5}, return_context=True)
     print(response.answer)
-    print()
-    print("Retrieved Chunks:",response.retriever_result.items)
 
 if __name__ == "__main__":
     # Create indexes
     graphrag(index_name, embedder)
     driver.close()
     ## Uncomment to diplay the graph of chunks
-    # display_graph()
+    display_graph()
