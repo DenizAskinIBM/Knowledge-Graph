@@ -5,6 +5,13 @@ langchain_experimental
 langchain_ibm
 neo4j
 json_repair
+langchain
+langchain_community
+langchain_core
+langchain_experimental
+langchain_ibm
+neo4j
+json_repair
 langchain_openai
 pypdf
 fsspec
