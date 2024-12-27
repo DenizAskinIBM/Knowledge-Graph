@@ -7,6 +7,9 @@ from langchain_community.graphs.graph_document import GraphDocument, Node, Relat
 
 llm_transformer = LLMGraphTransformer(llm=llm_chat_gpt)
 
+def read(filepath):
+    f = open(filepath,'r')
+    return f.read().strip()
 
 def display_graph():
     return webbrowser.open('http://localhost:7474/browser/')
@@ -95,14 +98,24 @@ def graph_generation_with_review(llm, text, prompt_chunking, prompt_generation, 
     return knowledge_graph, knowledge_graph_schema
 
 def main(transcripts, llm, prompt_chunking_llama, prompt_graph_generation_llama, prompt_correction, knowledge_graph, print_chunks, use_langchain_transformer):
-    for x in range(0,len(transcripts)):
-        # Create Knowledge Graphs of each text
+    if(isinstance(transcripts,list)):
+        for x in range(0,len(transcripts)):
+            # Create Knowledge Graphs of each text
+            generated_graph, graph_schema=graph_generation_with_review(llm, transcripts[x], 
+                                                                    prompt_chunking_llama, prompt_graph_generation_llama, 
+                                                                    prompt_correction, knowledge_graph, 
+                                                                    print_chunks,
+                                                                    use_langchain_transformer)
+            print()
+            print(f"Graph Schema {x+1}:",graph_schema)
+            print()
+    else:
         generated_graph, graph_schema=graph_generation_with_review(llm, transcripts[x], 
-                                                                   prompt_chunking_llama, prompt_graph_generation_llama, 
-                                                                   prompt_correction, knowledge_graph, 
-                                                                   print_chunks,
+                                                                    prompt_chunking_llama, prompt_graph_generation_llama, 
+                                                                    prompt_correction, knowledge_graph, 
+                                                                    print_chunks,
                                                                    use_langchain_transformer)
         print()
-        print(f"Graph Schema {x+1}:",graph_schema)
+        print(f"Graph Schema:",graph_schema)
         print()
     return retrieve_graph(generated_graph)

@@ -19,18 +19,22 @@ f = open("datasets/transcripts/mortgage_loan_3_transcript.txt", "r")
 mortgage_loan_transcript_3=''.join(f.read().splitlines())
 transcripts=[mortgage_loan_transcript_1,mortgage_loan_transcript_2,mortgage_loan_transcript_3]
 
-if __name__ == '__main__':
-    ## Generate graph
-    graph = main(
-        transcripts,
-        llm,
-        prompt_chunking_llama,
-        prompt_graph_generation_llama,
-        prompt_correction=None,
-        knowledge_graph=graph,
-        print_chunks=False,
-        use_langchain_transformer=True
-    )
+generate = True
+if(generate):
+    if __name__ == '__main__':
+        ## Generate graph
+        graph = main(
+            transcripts,
+            llm,
+            prompt_chunking_llama,
+            prompt_graph_generation_llama,
+            prompt_correction=None,
+            knowledge_graph=graph,
+            print_chunks=False,
+            use_langchain_transformer=True
+        )
+    else:
+        retrieve_graph(graph)
 
     # Once the graph data is successfully stored in Neo4j, the graph will be visualized in Neo4j browser: http://localhost:7474/browser/
     display_graph()
