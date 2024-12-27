@@ -1,7 +1,7 @@
 # Knowledge-Graph
 Creating and Querying Neo4J Knowledge Graphs with LLMs
 
-Compatibale with Python 3.11.1
+Compatibale with ```Python 3.11.9```
 
 To run, execute the following commands on your terminal to initiate Neo4J:
 
