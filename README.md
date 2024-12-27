@@ -1,9 +1,12 @@
 # Knowledge-Graph
 Creating and Querying Neo4J Knowledge Graphs with LLMs
 
+Compatibale with Python 3.11.1
+
 To run, execute the following commands on your terminal to initiate Neo4J:
 
 ```bash
+
 pip install podman
 
 podman machine init

@@ -7,6 +7,9 @@ from langchain_community.graphs.graph_document import GraphDocument, Node, Relat
 
 llm_transformer = LLMGraphTransformer(llm=llm_chat_gpt)
 
+def read(filepath):
+    f = open(filepath, "r")
+    return ''.join(f.read().splitlines())
 
 def display_graph():
     return webbrowser.open('http://localhost:7474/browser/')
