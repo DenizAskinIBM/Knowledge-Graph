@@ -11,6 +11,29 @@ def read(filepath):
     f = open(filepath, "r")
     return ''.join(f.read().splitlines())
 
+def print_index_names(driver):
+    with driver.session() as session:
+        result = session.run("SHOW INDEXES YIELD name")
+        index_names = [record["name"] for record in result]
+        print("Indexes in the database:")
+        for name in index_names:
+            print(name)
+
+def delete_all_indexes(driver):
+    with driver.session() as session:
+        # Fetch all indexes
+        result = session.run("SHOW INDEXES YIELD name")
+        index_names = [record["name"] for record in result]
+        
+        # Drop each index
+        for index_name in index_names:
+            try:
+                # Enclose the index name in backticks
+                session.run(f"DROP INDEX `{index_name}`")
+                print(f"Index '{index_name}' deleted successfully.")
+            except Exception as e:
+                print(f"Error deleting index '{index_name}': {e}")
+
 def display_graph():
     return webbrowser.open('http://localhost:7474/browser/')
 
@@ -97,11 +120,11 @@ def graph_generation_with_review(llm, text, prompt_chunking, prompt_generation, 
     knowledge_graph_schema = knowledge_graph.get_structured_schema
     return knowledge_graph, knowledge_graph_schema
 
-def main(transcripts, llm, prompt_chunking_llama, prompt_graph_generation_llama, prompt_correction, knowledge_graph, print_chunks, use_langchain_transformer):
-    if(isinstance(transcripts,list)):
-        for x in range(0,len(transcripts)):
+def main(input, llm, prompt_chunking_llama, prompt_graph_generation_llama, prompt_correction, knowledge_graph, print_chunks, use_langchain_transformer):
+    if(isinstance(input,list)):
+        for x in range(0,len(input)):
             # Create Knowledge Graphs of each text
-            generated_graph, graph_schema=graph_generation_with_review(llm, transcripts[x], 
+            generated_graph, graph_schema=graph_generation_with_review(llm, input[x], 
                                                                     prompt_chunking_llama, prompt_graph_generation_llama, 
                                                                     prompt_correction, knowledge_graph, 
                                                                     print_chunks,
@@ -110,7 +133,7 @@ def main(transcripts, llm, prompt_chunking_llama, prompt_graph_generation_llama,
             print(f"Graph Schema {x+1}:",graph_schema)
             print()
     else:
-        generated_graph, graph_schema=graph_generation_with_review(llm, transcripts[x], 
+        generated_graph, graph_schema=graph_generation_with_review(llm, input, 
                                                                     prompt_chunking_llama, prompt_graph_generation_llama, 
                                                                     prompt_correction, knowledge_graph, 
                                                                     print_chunks,
