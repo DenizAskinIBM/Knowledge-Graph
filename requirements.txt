@@ -21,3 +21,7 @@ neo4j_graphrag
 cohere
 langchain_cohere
 neo4j-graphrag[sentence-transformers]
+ibm_watsonx
+ibm_cloud_sdk_core
+ibm-watson
+ollama
