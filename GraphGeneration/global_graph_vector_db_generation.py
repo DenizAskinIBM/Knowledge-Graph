@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-index_name = ""
+index_name = "global_mortgage_index"
 
 NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
@@ -46,26 +46,48 @@ kg_builder = SimpleKGPipeline(
 )
 
 transcripts=read("datasets/When_to_verify_the_identity_of_persons_and_entities—Financial_entities.md")
-# Run the pipeline on a piece of text
-text = (
-    transcripts.strip()
-)
-asyncio.run(kg_builder.run_async(text=text))
+## Text to generate Knowledge Graphs from
+mortgage_loan_transcript_1 = read("datasets/transcripts/mortgage_loan_1_transcript.txt")
+mortgage_loan_transcript_2 = read("datasets/transcripts/mortgage_loan_2_transcript.txt")
+mortgage_loan_transcript_3 = read("datasets/transcripts/mortgage_loan_3_transcript.txt")
+transcripts=[mortgage_loan_transcript_1,mortgage_loan_transcript_2,mortgage_loan_transcript_3]
+if(isinstance(transcripts, list)):
+    for x in transcripts:
+        # Run the pipeline on a piece of text
+        text = (
+            x.strip()
+        )
+        asyncio.run(kg_builder.run_async(text=text))
+else:
+   # Run the pipeline on a piece of text
+    text = (
+        transcripts
+    )
+    asyncio.run(kg_builder.run_async(text=text)) 
+
+# create_fulltext_index(
+#     driver=driver,
+#     name=index_name,
+#     label="FinancialEntity",
+#     node_properties=[
+#         "TransactionType",
+#         "ThresholdAmount",
+#         "VerificationReason",
+#         "EntityType",
+#         "ExemptionCriteria",
+#         "CurrencyType",
+#         "VerificationMethod"
+#     ],
+#     fail_if_exists=False
+# )
 
 create_fulltext_index(
-    driver=driver,
-    name=index_name,
-    label="FinancialEntity",
-    node_properties=[
-        "TransactionType",
-        "ThresholdAmount",
-        "VerificationReason",
-        "EntityType",
-        "ExemptionCriteria",
-        "CurrencyType",
-        "VerificationMethod"
-    ],
-    fail_if_exists=False
+    driver,
+    index_name,
+    label="MortgageTranscript",
+    node_properties=["conversationText", "customerName", "representativeName"],
+    fail_if_exists=False,
 )
+
 driver.close()
-# # drop_index_if_exists(driver, full_text_index_name)
+# drop_index_if_exists(driver, index_name)

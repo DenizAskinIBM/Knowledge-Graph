@@ -20,7 +20,7 @@ driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
 # Create an Embedder object
 embedder = OpenAIEmbeddings(model="text-embedding-3-large")
-index_name = ""
+index_name = "financial-index"
 
 def graphrag(index_name, embedder):
 

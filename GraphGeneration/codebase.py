@@ -4,6 +4,8 @@ from chunks import Chunks
 import webbrowser
 from langchain_core.documents import Document
 from langchain_community.graphs.graph_document import GraphDocument, Node, Relationship
+from neo4j_graphrag.retrievers import HybridRetriever
+import ast
 
 llm_transformer = LLMGraphTransformer(llm=llm_chat_gpt)
 
@@ -119,6 +121,22 @@ def graph_generation_with_review(llm, text, prompt_chunking, prompt_generation, 
     knowledge_graph.refresh_schema()
     knowledge_graph_schema = knowledge_graph.get_structured_schema
     return knowledge_graph, knowledge_graph_schema
+
+def hybrid_retrieve_answer(question, index_name, full_text_index_name, driver, embedder, llm):
+    retriever = HybridRetriever(
+            driver, index_name, full_text_index_name, embedder
+        )
+    retriever_result = retriever.search(query_text=question, top_k=20)
+
+    # Retrieve the text of the context
+    context = []
+    for item in retriever_result.items:
+        # Parse the `content` string into a dictionary
+        content_dict = ast.literal_eval(item.content)  # Convert string to dictionary
+        if 'text' in content_dict:
+            context.append(content_dict['text'])  # Extract the 'text' field
+    answer = llm.invoke("Based on this context: "+str(context)+f" Answer the question: {question}").content
+    return answer, retriever_result
 
 def main(input, llm, prompt_chunking_llama, prompt_graph_generation_llama, prompt_correction, knowledge_graph, print_chunks, use_langchain_transformer):
     if(isinstance(input,list)):
