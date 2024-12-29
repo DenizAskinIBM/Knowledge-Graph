@@ -1,4 +1,5 @@
 import asyncio
+from embedders import sentence_transformer_embedder, open_ai_text_3_large_embedder
 from codebase import read, delete_all_indexes, print_index_names
 from neo4j import GraphDatabase
 from neo4j_graphrag.embeddings import OpenAIEmbeddings
@@ -10,7 +11,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-index_name = "global_mortgage_index"
+index_name = "global_mortgage_index_sentence_transformer"
 
 NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
@@ -18,13 +19,11 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 
 # Connect to the Neo4j database
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
+embedding_model = open_ai_text_3_large_embedder
 
 # Uncomment to print and/or delete all indexes
 # print_index_names(driver)
 # delete_all_indexes(driver)
-
-# Create an Embedder object
-embedder = OpenAIEmbeddings(model="text-embedding-3-large")
 
 # Instantiate the LLM
 llm = OpenAILLM(
@@ -40,7 +39,7 @@ llm = OpenAILLM(
 kg_builder = SimpleKGPipeline(
     llm=llm,
     driver=driver,
-    embedder=embedder,
+    embedder=embedding_model,
     on_error="IGNORE",
     from_pdf=False,
 )
