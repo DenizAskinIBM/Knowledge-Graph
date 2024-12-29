@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-index_name = ""
+index_name = "local_mortgage_index"
 
 NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
@@ -20,7 +20,7 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
 # Uncomment to print and/or delete all indexes
-print_index_names(driver)
+# print_index_names(driver)
 # delete_all_indexes(driver)
 
 # Create an Embedder object
@@ -46,11 +46,24 @@ kg_builder = SimpleKGPipeline(
 )
 
 transcripts=read("datasets/When_to_verify_the_identity_of_persons_and_entities—Financial_entities.md")
-# Run the pipeline on a piece of text
-text = (
-    transcripts.strip()
-)
-asyncio.run(kg_builder.run_async(text=text))
+## Text to generate Knowledge Graphs from
+mortgage_loan_transcript_1 = read("datasets/transcripts/mortgage_loan_1_transcript.txt")
+mortgage_loan_transcript_2 = read("datasets/transcripts/mortgage_loan_2_transcript.txt")
+mortgage_loan_transcript_3 = read("datasets/transcripts/mortgage_loan_3_transcript.txt")
+transcripts=[mortgage_loan_transcript_1,mortgage_loan_transcript_2,mortgage_loan_transcript_3]
+if(isinstance(transcripts, list)):
+    for x in transcripts:
+        # Run the pipeline on a piece of text
+        text = (
+            x.strip()
+        )
+        asyncio.run(kg_builder.run_async(text=text))
+else:
+   # Run the pipeline on a piece of text
+    text = (
+        transcripts
+    )
+    asyncio.run(kg_builder.run_async(text=text)) 
 
 # Create the index
 create_vector_index(
