@@ -2,9 +2,9 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain_ibm import ChatWatsonx
 from dotenv import load_dotenv
-load_dotenv("./.env")
+load_dotenv()
 
-url=os.getenv("WX_URL")
+url=os.getenv("WATSONX_URL")
 apikey=os.getenv("API_KEY")
 project_id=os.getenv("PROJECT_ID")
 openai_apikey=os.getenv("OPENAI_API_KEY")
