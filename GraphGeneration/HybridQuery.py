@@ -1,34 +1,54 @@
-from embedders import sentence_transformer_embedder, open_ai_text_3_large_embedder
+from embedders import sentence_transformer_embedder, open_ai_text_3_large_embedder, open_ai_text_ada_002_embedder
 from neo4j import GraphDatabase
-from codebase import hybrid_retrieve_answer
+from codebase import hybrid_retrieve_answer, read, delete_all_indexes, print_index_names, context_retriever
+from llms import llm_chat_gpt, llm_llama, llm_granite
+from neo4j_graphrag.llm.openai_llm import OpenAILLM
 from llms import llm_chat_gpt, llm_llama
+from neo4j_graphrag.retrievers import HybridRetriever
+from neo4j_graphrag.generation import GraphRAG
 import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-llm = llm_llama
+ # Instantiate the LLM
+llm = OpenAILLM(model_name="gpt-4o", model_params={"temperature": 0})
 # Credentials
 NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-local_index_name = ""
-global_index_name = ""
+# Enter indexes
+local_index_name = "local_financial_gpt_index"
+global_index_name = "global_financial_gpt_index"
 
+# Select embedding model
 embedding_model = sentence_transformer_embedder
 
-# Connect to Neo4j database
-driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME,NEO4J_PASSWORD))
 if __name__ == "__main__":
-    question="Client wants to open an account. Should I verify their identity?"
-    answer, retrieved_context= hybrid_retrieve_answer(question, local_index_name, global_index_name, driver, embedding_model, llm)
-    # Uncomment to delete indexes
-    # drop_index_if_exists(driver, index_name)
-    # drop_index_if_exists(driver, full_text_index_name)
+    # Connect to Neo4j database
+    driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME,NEO4J_PASSWORD))
+    # Uncomment to print and/or delete all indexes
+    # print_index_names(driver)
+    # delete_all_indexes(driver)
+    question="A client wants to open a savings account, should I verify their identity?"
+    top_k=10
+    retriever = HybridRetriever(
+            driver, local_index_name, global_index_name, embedding_model
+        )
+    # Initialize the RAG pipeline
+    rag = GraphRAG(retriever=retriever, llm=llm)
+    print("Top_k", top_k)
     print("Question:",question)
-    ()
-    print("Answer:", answer)
+    hybrid_retrieve_answer = rag.search(query_text=question, retriever_config={"top_k": top_k}, return_context=True)
+    print("Answer:", hybrid_retrieve_answer.answer)
     print()
-    print("Retrieved Context:", retrieved_context)
+    print("Answer 2:", llm_chat_gpt.invoke("Based on the provided context, answer the question. Context: "+str(retriever.search(query_text=question, top_k=10))+" Question: "+question).content)
+    print()
+    # for x in hybrid_retrieve_answer.retriever_result:
+    #     print()
+    #     print(x)
+    #     print()
+    driver.close()

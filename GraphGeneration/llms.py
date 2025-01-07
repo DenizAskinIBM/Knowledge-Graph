@@ -18,6 +18,10 @@ parameters = {
     "decoding_method": "greedy",
     "max_new_tokens": 10000,
     "min_new_tokens": 1,
+    "temperature": 0,
+    "top_k": 1,
+    "top_p": 1.0,
+    "seed": 42  
 }
 
 llm_code = ChatWatsonx(

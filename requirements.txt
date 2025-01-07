@@ -25,3 +25,7 @@ ibm_watsonx
 ibm_cloud_sdk_core
 ibm-watson
 ollama
+tavily-python
+igraph
+leidenalg
+numpy

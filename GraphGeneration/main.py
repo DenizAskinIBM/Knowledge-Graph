@@ -7,7 +7,7 @@ from langchain_neo4j import Neo4jGraph
 graph = Neo4jGraph()
 
 # ## Select LLM
-llm = llm_llama
+llm = llm_chat_gpt
 
 ## Text to generate Knowledge Graphs from
 mortgage_loan_transcript_1 = read("datasets/transcripts/mortgage_loan_1_transcript.txt")
@@ -25,8 +25,8 @@ if __name__ == '__main__':
         generated_graph = main(
             input,
             llm,
-            prompt_chunking_llama,
-            prompt_graph_generation_llama,
+            prompt_chunking_chat_gpt,
+            prompt_graph_generation_chat_gpt,
             prompt_correction=None,
             knowledge_graph=graph,
             print_chunks=False,
@@ -38,5 +38,5 @@ if __name__ == '__main__':
     # Once the graph data is successfully stored in Neo4j, the graph will be visualized in Neo4j browser: http://localhost:7474/browser/
     display_graph()
     ## Query the Knowledge Graphs
-    ask_question(prompt_multiple_graph_query_llama, llm, generated_graph)
+    ask_question(prompt_multiple_graph_query_chat_gpt, llm, generated_graph)
 

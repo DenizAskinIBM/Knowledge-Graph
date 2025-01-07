@@ -39,6 +39,21 @@ def delete_all_indexes(driver):
 def display_graph():
     return webbrowser.open('http://localhost:7474/browser/')
 
+def context_retriever(retriever_result):
+    chunk_texts = []
+
+    for item in retriever_result.items:
+        # item.content looks like:
+        # "{'id': ':4', 'index': 4, 'text': '...lots of text...', 'embedding': None}"
+        
+        # Convert the string to a real Python dict
+        parsed_dict = ast.literal_eval(item.content)  
+        # Now just grab the text key
+        text_value = parsed_dict['text']
+        
+        chunk_texts.append(text_value)
+        return chunk_texts
+
 def chunking(text, prompt, llm):
     structured_llm_chunking = llm.with_structured_output(Chunks)
     prompt_and_model_chunking = prompt | structured_llm_chunking
@@ -121,21 +136,39 @@ def graph_generation_with_review(llm, text, prompt_chunking, prompt_generation, 
     knowledge_graph.refresh_schema()
     knowledge_graph_schema = knowledge_graph.get_structured_schema
     return knowledge_graph, knowledge_graph_schema
+    
 
-def hybrid_retrieve_answer(question, index_name, full_text_index_name, driver, embedder, llm):
+def hybrid_retrieve_answer(question, index_name, full_text_index_name, driver, embedder, top_k, llm):
     retriever = HybridRetriever(
             driver, index_name, full_text_index_name, embedder
         )
-    retriever_result = retriever.search(query_text=question, top_k=20)
+    retriever_result = retriever.search(query_text=question, top_k=top_k)
+   
+    # # 1. Grab the list of items from the retriever result
+    # items = retriever_result.items
 
-    # Retrieve the text of the context
-    context = []
+    # # 2. Sort them in descending order by score (assuming every item has 'metadata["score"]')
+    # sorted_items = sorted(items, key=lambda x: x.metadata.get("score", 0.0), reverse=True)
+
+    # # 3. (Optional) Replace the original list with the sorted version
+    # retriever_result.items = sorted_items
+
+    import ast
+
+    chunk_texts = []
+
     for item in retriever_result.items:
-        # Parse the `content` string into a dictionary
-        content_dict = ast.literal_eval(item.content)  # Convert string to dictionary
-        if 'text' in content_dict:
-            context.append(content_dict['text'])  # Extract the 'text' field
-    answer = llm.invoke("Based on this context: "+str(context)+f" Answer the question: {question}").content
+        # item.content looks like:
+        # "{'id': ':4', 'index': 4, 'text': '...lots of text...', 'embedding': None}"
+        
+        # Convert the string to a real Python dict
+        parsed_dict = ast.literal_eval(item.content)  
+        # Now just grab the text key
+        text_value = parsed_dict['text']
+        
+        chunk_texts.append(text_value)
+
+    answer = llm.invoke("Based on this context: "+str(chunk_texts)+f" Answer the question: {question}").content
     return answer, retriever_result
 
 def main(input, llm, prompt_chunking_llama, prompt_graph_generation_llama, prompt_correction, knowledge_graph, print_chunks, use_langchain_transformer):
