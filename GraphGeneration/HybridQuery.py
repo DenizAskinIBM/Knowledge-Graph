@@ -33,16 +33,22 @@ if __name__ == "__main__":
     # Uncomment to print and/or delete all indexes
     # print_index_names(driver)
     # delete_all_indexes(driver)
-
     question="A client wants to open a savings account, should I verify their identity?"
     top_k=10
     retriever = HybridRetriever(
-            driver=driver, vector_index_name=local_index_name, fulltext_index_name=global_index_name, embedder=embedding_model
+            driver, local_index_name, global_index_name, embedding_model
         )
-    # # Initialize the RAG pipeline
+    # Initialize the RAG pipeline
     rag = GraphRAG(retriever=retriever, llm=llm)
     print("Top_k", top_k)
     print("Question:",question)
     hybrid_retrieve_answer = rag.search(query_text=question, retriever_config={"top_k": top_k}, return_context=True)
     print("Answer:", hybrid_retrieve_answer.answer)
+    print()
+    print("Answer 2:", llm_chat_gpt.invoke("Based on the provided context, answer the question. Context: "+str(retriever.search(query_text=question, top_k=10))+" Question: "+question).content)
+    print()
+    # for x in hybrid_retrieve_answer.retriever_result:
+    #     print()
+    #     print(x)
+    #     print()
     driver.close()

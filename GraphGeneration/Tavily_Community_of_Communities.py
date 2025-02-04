@@ -178,7 +178,7 @@ def main(question, web_scraping_questions):
     import igraph
     import leidenalg
 
-    k = 3
+    k = 4
     nbrs = NearestNeighbors(n_neighbors=k, metric="cosine")
     nbrs.fit(X)
     distances, indices = nbrs.kneighbors(X)

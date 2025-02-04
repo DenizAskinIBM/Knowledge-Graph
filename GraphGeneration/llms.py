@@ -61,7 +61,7 @@ llm_chat_gpt = ChatOpenAI(
     temperature=0,
     max_tokens=None,
     timeout=None,
-    max_retries=1,
+    max_retries=2,
     api_key=openai_apikey
 )
 

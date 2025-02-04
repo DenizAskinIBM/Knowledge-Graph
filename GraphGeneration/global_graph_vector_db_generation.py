@@ -18,7 +18,9 @@ from prompts import prompt_chunking_chat_gpt
 from llms import llm_chat_gpt
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
+from dotenv import load_dotenv
+# Load environment variables from .env file
+load_dotenv()
 
 index_name = "global_financial_gpt_index"
 
@@ -110,6 +112,7 @@ else:
     sample_embedding = open_ai_text_3_large_embedder.embed_query("sample text")
     dimensions = len(sample_embedding)
 
+
 # For Financial Document
 create_fulltext_index(
     driver=driver,
@@ -127,6 +130,15 @@ create_fulltext_index(
     ],
     fail_if_exists=False,
 )
+
+# ## For Mortgage Document
+# create_fulltext_index(
+#     driver,
+#     index_name,
+#     label="MortgageTranscript",
+#     node_properties=["conversationText", "customerName", "representativeName"],
+#     fail_if_exists=False,
+# )
 
 # ## Set True if you want to delete the index you created
 delete_index=False
