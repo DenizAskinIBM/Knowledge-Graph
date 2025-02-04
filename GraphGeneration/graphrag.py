@@ -55,6 +55,6 @@ def graphrag(question, index_name, embedder, top_k, llm):
 if __name__ == "__main__":
     # Query the graph
     question="A client wants to open a savings account, should I verify their identity?"
-    graphrag(question, index_name, embedding_model, top_k=10, llm=llm_llama)
+    graphrag(question, index_name, embedding_model, top_k=10, llm=llm)
     ## Uncomment to diplay the graph of chunks
     display_graph()
