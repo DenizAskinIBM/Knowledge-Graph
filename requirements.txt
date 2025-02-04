@@ -29,3 +29,7 @@ tavily-python
 igraph
 leidenalg
 numpy
+flask 
+flask_session
+datasets
+playwright
