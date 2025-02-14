@@ -33,3 +33,14 @@ flask
 flask_session
 datasets
 playwright
+langchain_huggingface
+langchain_elasticsearch
+elasticsearch
+community
+gdsfactory
+spacy
+py2neo
+nltx
+PyPDF2
+bs4
+langchain_nvidia_ai_endpoints

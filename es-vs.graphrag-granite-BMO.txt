@@ -1,0 +1,356 @@
+
+Extracting PDF text before ingestion into ES or Graph...
+Cleared existing Chunks and dropped index 'pdf_vector_index' from Neo4j.
+------------------------------------------------------
+📌 Starting ingestion from PDF: /Users/denizaskin/CodeBase/agenticchunking/GraphGeneration/merged.pdf
+------------------------------------------------------
+[1/8] Extracting text from PDF...
+[2/8] Splitting and storing chunks in Neo4j...
+[3/8] Creating Neo4j vector index...
+Total valid chunks in Neo4j: 85
+[4/8] Running nearest neighbors for similarity graph...
+[5/8] Running Leiden community detection (first-level)...
+Deleting existing RELATED relationships, then recreating them in bulk...
+Assigned 'community' labels to chunks.
+[6/8] Generating short factual summaries for each chunk...
+Chunk summarization complete.
+[7/8] Generating first-level community names and centroids...
+First-level communities named.
+[8/8] Creating second-level super_communities + naming them...
+✅ Knowledge Graph built successfully from PDF.
+------------------------------------------------------
+
+
+=============================================================
+Question: what is the meaning of verifying the identity of a person or an entity 
+Ground Truth: It means to use methods to ensure that the information in an identification document or from other informational sources matches the information that the person or entity provided.
+Routing question to super communities: [8]
+Chosen first-level communities: {8}
+GraphRAG Candidate Answer: {"response": "Verifying the identity of a person or an entity involves confirming their true or authentic nature. In the context of records and metadata, this process ensures that the information associated with a particular individual or entity is accurate and belongs to the correct party. It often involves checking official documents, such as identification cards or legal records, to establish a reliable link between the person or entity and their claimed identity. This process is crucial for maintaining data integrity, security, and privacy."}
+Elasticsearch RAG Candidate Answer: {"response": "Verifying the identity of a person or an entity means using the methods described in the guidance to ensure that the information in an identification document or from other informational sources matches the information that the person or entity provided. This process is a foundational element of Canada's anti-money laundering and anti-terrorist financing regime and a key component of an entity's relationship with clients. It helps in knowing clients and understanding and assessing any risk associated with their transactions or activities."}
+GraphRAG Correctness (1/0): 1
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 1
+=============================================================
+
+=============================================================
+Question: Why is it important to verify identify?
+Ground Truth: Verifying identify is a foundational element of Canada's anti-money laundering and anti-terrorist financing
+          regime and a key component of an Reporting Entity's relationship with clients. It helps you to know
+          your clients and to understand
+          and assess any risk that be associated to their transactions or activities.
+Routing question to super communities: [8]
+Chosen first-level communities: {8}
+GraphRAG Candidate Answer: {"response": "Verifying identity is crucial to ensure the accuracy and security of records and metadata. It helps prevent unauthorized access, data breaches, and maintains the integrity of the information. In the context of records and metadata, verifying identity ensures that only authorized individuals can access, modify, or delete sensitive data, thus protecting privacy and maintaining the reliability of the information."}
+Elasticsearch RAG Candidate Answer: {"response": "Verifying identity is a foundational element of Canada's anti-money laundering and anti-terrorist financing regime. It helps real estate professionals (REs) know their clients and understand and assess any risk that may be associated with their transactions or activities. This process contributes to maintaining the integrity of financial systems and preventing illicit activities."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 1
+=============================================================
+
+=============================================================
+Question: What are the methods to verify the identify of a person?
+Ground Truth: The methods to verify the identify of a person are:
+          - government-issued photo identification method
+          - credit file method
+          - dual-process method
+          - affiliate or member method
+          - reliance method
+Routing question to super communities: [10]
+Chosen first-level communities: {10}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain information on methods to verify the identity of a person. However, common methods include using government-issued IDs, biometric data (like fingerprints or facial recognition), and cross-referencing personal information with reliable databases."}
+Elasticsearch RAG Candidate Answer: {"response": "There are five methods to verify the identity of a person, as outlined in the provided context:\n\n1. Government-issued photo identification method: This involves referring to a government-issued photo identification document that is authentic, valid, and current, issued by a federal, provincial, territorial government, or a foreign government if it is recognized.\n\n2. Credit file method: This method involves checking credit files or reports to verify a person's identity.\n\n3. Dual-process method: This method combines two of the other verification methods to ensure a higher level of accuracy.\n\n4. Affiliate or member method: This method involves relying on another regulated entity (RE) or affiliated foreign entity to verify the identity of a person, provided they have a written agreement or arrangement in place.\n\n5. Reliance method: This method involves relying on information from reliable sources, such as banks, law firms, or accounting firms, to verify a person's identity.\n\nEach method must be accompanied by proper documentation and adherence to the compliance program's policies and procedures to ensure the validity and currency of the information."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 2
+=============================================================
+
+=============================================================
+Question: What are the requirements for government-issued photo identification document to verify the identify of a person?
+Ground Truth: The requirements for a government-issued photo identification document to verify the identity of a person are:
+          - be authentic, valid and current
+          - be issued by a federal, provincial or territorial government (or by a foreign government
+            if it is equivalent to a Canadian document);
+          - indicate the person's name;
+          - include a photo of the person;
+          - include a unique identifying number; and match the name and appearance of the person being identified.
+Routing question to super communities: [10]
+Chosen first-level communities: {10}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain specific requirements for government-issued photo identification documents. However, generally, such documents may include elements like:\n\n1. Full name\n2. Date of birth\n3. Gender\n4. Expiration date\n5. A secure and unique personal identification number\n6. A high-quality photograph of the individual\n7. Security features to prevent tampering or forgery\n\nPlease refer to the specific government's guidelines for accurate information."}
+Elasticsearch RAG Candidate Answer: {"response": "To verify the identity of a person using a government-issued photo identification document, the document must meet the following requirements:\n\n1. It must be issued by a government (either domestic or foreign, if equivalent to a Canadian document).\n2. It must contain information about the person, including their name.\n3. It must include a photograph of the person.\n4. It must have a unique identifying number.\n5. The name and appearance of the person on the document must match the person being identified.\n\nAdditionally, the document's authenticity, validity, and current status must be determined by examining its physical characteristics and security features in the presence of the person being identified.\n\nWhen using this method, you must also record the person's name, the date of identity verification, the type of document used, its unique identifying number, the jurisdiction and country of issue, and the document's expiry date (if available)."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 3
+=============================================================
+
+=============================================================
+Question: When using the credit file method to verify the identity of a person, what are the requirements for the credit file?
+Ground Truth: When using the credit file method to verify the identify of a person, the credit file must:
+          - contain information that is valid and current
+          - be from a Canadian credit bureau (credit files from foreign credit bureaus are not acceptable)
+          - have been in existence for at least three years;
+          - contain information that is derived from more than one source (i.e. more than one tradeline); and
+          - match the name, address and date of birth of the person being identified.
+Routing question to super communities: [8]
+Chosen first-level communities: {8}
+GraphRAG Candidate Answer: {"response": "The context provided does not specify the requirements for the credit file when using the credit file method to verify a person's identity. Generally, the credit file should contain sufficient personal information such as name, address, date of birth, and Social Security number to match with the individual's provided details. However, for precise requirements, additional information is needed."}
+Elasticsearch RAG Candidate Answer: {"response": "When using the credit file method to verify the identity of a person, the credit file must meet the following requirements:\n\n1. Contain valid and current information.\n2. Be from a Canadian credit bureau (credit files from foreign credit bureaus are not acceptable).\n3. Have been in existence for at least three years.\n4. Contain information derived from more than one source (i.e., more than one tradeline).\n5. Match the name, address, and date of birth of the person being identified.\n\nIt's important to note that a credit file provides a rating on a person's ability to repay loans, but a credit assessment is not necessary to verify a person's identifying information. Equifax Canada and TransUnion Canada are Canadian credit bureaus that provide credit file information for identification purposes. The search must be conducted at the time of verifying the person's identity, and a person cannot provide a copy of the credit file."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 4
+=============================================================
+
+=============================================================
+Question: When using the credit file method to verify the identity of a person, can the credit file be obtained from the person?
+Ground Truth: No
+Routing question to super communities: [1]
+Chosen first-level communities: {1}
+GraphRAG Candidate Answer: {"response": "No, the credit file cannot be obtained directly from the person. Credit files are maintained by credit bureaus, such as Experian, Equifax, and TransUnion, and are typically accessed by authorized third parties, like lenders or identity verification services, with the individual's consent. The individual does not have direct access to their credit file."}
+Elasticsearch RAG Candidate Answer: {"response": "No, according to the provided context, a person cannot provide you with a copy of their credit file. The credit file must be obtained from a Canadian credit bureau or a third-party vendor authorized by a Canadian credit bureau."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 5
+=============================================================
+
+=============================================================
+Question: What is the dual-process method of verifying the identify of a person?
+Ground Truth: The dual-process method of verifying the identify of a person consists of doing any two of the following?
+-referring to information from a reliable source that includes the person's name and address and confirming that the name and address are those of the person;
+-referring to information from a reliable source that includes the person's name and date of birth, and confirming that the name and date of birth are those of the person; or
+-referring to information that includes the person's name and confirms that they have a deposit account, a prepaid payment product account , or a credit card or other loan account with a financial entity, and confirming that information.
+Routing question to super communities: [8]
+Chosen first-level communities: {8}
+GraphRAG Candidate Answer: {"response": "The context provided does not include information on the dual-process method of verifying a person's identity. Therefore, I cannot provide an accurate answer based on the given context.\n\nThe dual-process method, also known as the two-factor authentication, is a security process in which the user provides two different authentication factors to verify their identity. These factors typically include:\n\n1. Something the user knows, such as a password or PIN.\n2. Something the user has, such as a physical token or a smartphone to receive a verification code.\n\nThis method enhances security by requiring two forms of identification, making it more difficult for unauthorized users to gain access."}
+Elasticsearch RAG Candidate Answer: {"response": "The dual-process method of verifying the identity of a person involves using any two of the following steps:\n\n1. Referring to information from a reliable source that includes the person's name and address, and confirming that the name and address are those of the person.\n2. Referring to information from a reliable source that includes the person's name and date of birth, and confirming that the name and date of birth are those of the person.\n3. Referring to information that includes the person's name and confirming that they have a deposit account, a prepaid payment product account, or a credit card or other loan account with a financial entity.\n\nWhen using this method, you must keep a record of the person's name, the written agreement or arrangement with the other entity for the purpose of verifying a person's identity, and the information that the other entity referred to in order to verify the person's identity.\n\nYour compliance program's policies and procedures must describe the processes you follow when using the reliance method to verify a person's identity and how you will ensure that the information is valid and current.\n\nIf the information is not valid and current, you should search a different credit file, use another method, stop the transaction, etc.\n\nIn the case of using the Canadian credit bureau, you must rely on information from two independent tradelines where each tradeline confirms one of the two categories of information required to verify the identity of a person under this method. Each tradeline is a distinct source; the credit bureau is not the source. The tradelines cannot be your own, as the RE verifying the person's identity, and each tradeline must originate from a different reliable source, such as a federally regulated financial institution or a utility service provider."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 6
+=============================================================
+
+=============================================================
+Question: What is the affiliate or member method of verifying the identify of a person?
+Ground Truth: The affiliate or member methof of verifiying the identity of a persons consists of confirming that one of the following entities previously verified the person's identity:
+-an affiliate of yours that is an RE referred to in any of paragraphs 5(a) to (g) of the PCMLTFA;
+-a foreign affiliate of yours that carries out activities outside of Canada that are similar to the activities of an RE referred to in any of paragraphs 5(a) to (g) of the PCMLTFA;or
+-a financial entity that is subject to the PCMLTFA and is a member of your financial services cooperative or credit union central.
+Routing question to super communities: [12]
+Chosen first-level communities: {12}
+GraphRAG Candidate Answer: {"response": "The context provided does not include information on the affiliate or member method of verifying the identity of a person. Therefore, I cannot provide an accurate answer based on the given context."}
+Elasticsearch RAG Candidate Answer: {"response": "The affiliate or member method of verifying the identity of a person involves confirming that an affiliate or a financial entity that is a member of your financial services cooperative or central has previously verified the person's identity. This method requires dual-process validation, which means obtaining reliable information from two different sources where neither the RE nor the person is a source. The combination of two of the following can be used: name and address; name and date of birth; or name and confirmation of a financial account. The records must include the person's name, date of verification, names of the two different sources used, type of information, account number or associated number, and the method used by the affiliate or member to verify the person's identity. Reliance on this method requires satisfaction that the information from the other RE or affiliate was obtained in accordance with the PCML TFR as it read at the time, and the information required to be recorded for that method. The compliance program's policies and procedures must describe the processes followed when using this method to verify a person's identity."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 6
+=============================================================
+
+=============================================================
+Question: What is the reliance method of verifying identity of a person?
+Ground Truth: The relinace method of verifying the identity of a peson relies on measures that were previously taken by:
+-another RE (person or entity that is referred to in section 5 of the PCMLTFA);or
+-an entity that is affiliated with you or with another RE and carries out activities outside of Canada that are similar to those of a person or entity referred to in any of paragraphs 5(a) to (g) of the PCMLTFA (an affiliated foreign entity).
+Routing question to super communities: [8]
+Chosen first-level communities: {8}
+GraphRAG Candidate Answer: {"response": "The context provided does not include information on the reliance method of verifying a person's identity. Therefore, I cannot provide an accurate answer based on the given context."}
+Elasticsearch RAG Candidate Answer: {"response": "The reliance method of verifying the identity of a person involves relying on measures previously taken by another Reporting Entity (RE) or an affiliated foreign entity. This method can be used to verify the identity of a corporation or other entity. To use this method, you must be satisfied that the other RE or affiliated foreign entity has policies in place similar to the record-keeping, verifying identity, and compliance program requirements under the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCML TFA). This includes the requirement to verify the identity of a person.\n\nWhen using the reliance method, you must keep a record of the person's name, the written agreement or arrangement with the other RE or affiliated foreign entity for the purpose of verifying a person's identity, and the information that the other RE or affiliated foreign entity referred to in order to verify the person's identity. Your compliance program's policies and procedures must describe the processes you follow when using the reliance method to verify a person's identity and how you will ensure that the information is valid and current.\n\nThis method can also be used to verify the identity of a person by using an agent or mandatary to carry out the verification on your behalf, in accordance with the government-issued photo identification method, the credit file method, or the dual-process method. You may rely on the measures previously taken by an agent or mandatary to verify the person's identity."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 7
+=============================================================
+
+=============================================================
+Question: What are the requirements for electronic funds transfers (EFTs) regarding client identification?
+Ground Truth: For EFTs over $10,000, FEs must verify the identities of both the sender and receiver if they are new clients or if there is no business relationship. This requirement applies even if the transfer occurs within Canada.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The provided context does not contain specific information regarding the requirements for electronic funds transfers (EFTs) concerning client identification. For accurate details, please refer to relevant financial regulations or consult with a financial expert. Generally, EFTs may require client identification for security and compliance purposes, often involving Know Your Customer (KYC) procedures."}
+Elasticsearch RAG Candidate Answer: {"response": "For electronic funds transfers (EFTs), financial entities (FEs) must verify the identity of every person who requests the initiation of an international EFT or any other EFT that is a SWIFT MT-103 message or its equivalent, including domestic SWIFT MT-103 or its equivalent, of $1,000 or more when the transaction is being requested. Additionally, FEs must verify the identity of every person they remit funds to who is the beneficiary of an international EFT of $1,000 or more when the transaction takes place."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 7
+=============================================================
+
+=============================================================
+Question: what is the requirement for FEs to verify the identity of a person or entity from whom virtual currency is received?
+Ground Truth: FEs must verifity the identity of a person or entity from whom a virtual currency is recieved when the amount of vritual currency is equivalent to $10,000 or more.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain specific information regarding the requirements for Financial Entities (FEs) to verify the identity of a person or entity from whom virtual currency is received. However, generally, FEs are required to comply with Anti-Money Laundering (AML) and Know Your Customer (KYC) regulations. These regulations typically mandate that FEs verify the identity of their customers, including those from whom they receive virtual currency, to prevent financial crimes such as money laundering and terrorist financing. The specific procedures and standards for identity verification can vary depending on the jurisdiction and the type of FE. For precise details, it would be necessary to refer to the relevant regulations in the specific jurisdiction where the FE operates."}
+Elasticsearch RAG Candidate Answer: {"response": "Financial entities (FEs) must verify the identity of persons and entities when receiving virtual currency (VC) in an amount equivalent to $1,000 or more. This requirement is outlined in the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA) and associated Regulations. The specific guidance on how to verify the identity of persons and entities can be found in FINTRA C's Methods to verify the identity of persons and entities guidance."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 7
+=============================================================
+
+=============================================================
+Question: what is the requirement for FEs to verify the identity of a person or entity from whom cash is received?
+Ground Truth: FEs must verifity the identity of a person or entity from whom cash is recieved when the amount of vritual currency is equivalent to $10,000 or more.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain specific information regarding the requirements for Front End (FE) systems to verify the identity of a person or entity from whom cash is received. Generally, such verification processes are governed by anti-money laundering (AML) and know-your-customer (KYC) regulations, which may include checking government-issued IDs, cross-referencing with databases, and using biometric data. However, for precise details, please refer to the relevant financial regulations and guidelines."}
+Elasticsearch RAG Candidate Answer: {"response": "Financial entities (FEs) do not have to verify the identity of a person or entity from whom cash is received if the cash is received from another FE or a public body, or from a person acting on behalf of a client that is an FE or a public body. Additionally, if the amount received is deposited to a business account or is deposited in an automated banking machine (including a quick drop or night deposit), verification is not required."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 7
+=============================================================
+
+=============================================================
+Question: what is the requirement for FEs to verify the identity of a person or entity from whom cash or virtual curreny is received.
+Ground Truth: FEs must verifity the identity of a person or entity from whom cash or vitual currency is recieved when the amount of cash or vritual currency is equivalent to $10,000 or more.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain specific information regarding the requirements for Financial Entities (FEs) to verify the identity of a person or entity from whom cash or virtual currency is received. However, generally, FEs are required to comply with Anti-Money Laundering (AML) and Know Your Customer (KYC) regulations. These regulations typically mandate that FEs verify the identity of their customers through reliable, independent source documents, data, or other information. The specific requirements can vary by jurisdiction and the type of FE. For precise details, it would be necessary to refer to the relevant regulations in the applicable jurisdiction."}
+Elasticsearch RAG Candidate Answer: {"response": "Financial entities (FEs) must verify the identity of a person or entity from whom they receive cash or virtual currency (VC) in certain circumstances. However, there are exceptions to this requirement.\n\nFor cash transactions, FEs do not have to verify the identity of a person or entity if they receive the cash from another FE or a public body, or from a person acting on behalf of a client that is an FE or a public body. Additionally, if the amount received is deposited to a business account or an automated banking machine, verification is not required.\n\nFor virtual currency transactions, FEs do not have to verify the identity of a person or entity if they receive the VC from a client that is an FE or a public body, or from a person acting on behalf of a client that is an FE or public body.\n\nIn all cases, FEs must verify the identity of a person or entity for large cash transactions, large virtual currency transactions, suspicious transactions, issuing or redeeming money orders, traveler's cheques, or other similar negotiable instruments of $3,000 or more, initiating an international electronic funds transfer of $1,000 or more, and remitting funds to the beneficiary of an international EFT. They must also verify the identity of every person or entity that conducts or attempts to conduct a suspicious transaction, regardless of the transaction amount, before sending a Suspicious Transaction Report (STR).\n\nFEs must use the methods specified by the Regulations in place at the time and keep associated records, provided they have no doubts about the information used."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 7
+=============================================================
+
+=============================================================
+Question: When must FEs verifty the identify of every person, corporation, and entity other than a corporation for which an account is opened?
+Ground Truth: FEs must verify the identify of every person, coroporation and entity other than a corporation for which an account is opened before the first transaction other than initial deposit is carried out.
+Routing question to super communities: [0]
+Chosen first-level communities: {0}
+GraphRAG Candidate Answer: {"response": "According to the provided context, there is no specific information regarding the verification of identities for account openings. Therefore, I cannot provide a definitive answer based on the given context. However, generally, Financial Entities (FEs) are required to verify the identity of every person, corporation, and entity for which an account is opened as part of anti-money laundering (AML) and know-your-customer (KYC) regulations. This process is typically done at the time of account opening. Please refer to the relevant financial regulations for precise details."}
+Elasticsearch RAG Candidate Answer: {"response": "Financial entities (FEs) must verify the identity of every person, corporation, and entity other than a corporation for which an account is opened in the following scenarios:\n\na. Large cash transactions\nb. Large virtual currency (VC) transactions\nc. Suspicious transactions\nd. Issuing or redeeming money orders, traveler's cheques, or other similar negotiable instruments of $3,000 or more\ne. Initiating an international electronic funds transfer (EFT)\u2014or any other EFT that is a SWIFT MT-103 message or its equivalent\u2014of $1,000 or more\nf. Remitting funds to the beneficiary of an international EFT of $1,000 or more\n\nAdditionally, FEs must verify the identity if the entity is a subsidiary of a corporation or an entity referred to in paragraphs a. to d., and its financial statements are consolidated with the financial statements of that corporation or entity. FEs must also verify the identity if the entity is an institution or agency of, or owned by, the government of a foreign state, or a public service body as defined in subsection 123(1) of the Excise Tax Act. In these cases, FEs must be satisfied that the corporation or other entity exists and that every person who deals with them on behalf of the corporation or other entity is authorized by it to do so.\n\nFurthermore, if FEs subsequently consider, based on their risk assessment, that the risk of a money laundering offense or terrorist activity financing offense has increased and is no longer low, they must verify the identity of the affiliated foreign entity. This verification requires FEs to ensure that the affiliated foreign entity has policies in place similar to the record-keeping, verifying identity, and compliance program requirements under the PCML TFA, including the requirement to develop and apply policies to assess, in the course of their activities, the risk of a money laundering offense or a terrorist activity financing offense, and the requirement to take enhanced measures where the risk has been identified as high. FEs must also ensure that the affiliated foreign entity's compliance with those policies is subject to the supervision of a competent authority under the legislation of that foreign state.\n\nTo rely on measures previously taken by another RE or an affiliated foreign entity to verify the identity of a person, FEs must obtain the information that was confirmed as being that of the person as soon as feasible and be satisfied that the information is accurate."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 7
+=============================================================
+
+=============================================================
+Question: When do FEs verify the identity of a person initiating an international electronic funds transfer (EFT)?
+Ground Truth: FEs must verify the identify of a person initiating an international electronic funds transfer (EFT) when the EFT amount is $1000 or more.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain specific information regarding the verification of a person's identity during an international electronic funds transfer (EFT). Generally, financial institutions (FEs) verify the identity of a person initiating an EFT during the initial setup of the transfer or when there are suspicious activities detected. However, for precise details, please refer to the relevant financial regulations or consult with a financial expert."}
+Elasticsearch RAG Candidate Answer: {"response": "FEs must verify the identity of a person initiating an international electronic funds transfer (EFT)\u2014or any other EFT that is a SWIFT MT-103 message or its equivalent\u2014of $1,000 or more when the transaction is being requested."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 7
+=============================================================
+
+=============================================================
+Question: Do FEs verify the identity of every person or entity who opens a credit card account?
+Ground Truth: Yes, FEs must verify the identify of every person or entity who opens a credit card account.
+Routing question to super communities: [3]
+Chosen first-level communities: {3}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain information regarding the verification process for credit card account openers. Therefore, I cannot definitively answer whether FEs (presumably Financial Entities) verify the identity of every person or entity who opens a credit card account.\n\nHowever, in general, financial institutions are required to comply with regulations such as the Know Your Customer (KYC) and Anti-Money Laundering (AML) policies, which typically involve identity verification procedures for account openers.\n\nFor a precise answer, please refer to the specific policies and procedures of the relevant financial institutions."}
+Elasticsearch RAG Candidate Answer: {"response": "Yes, according to the provided context, FEs must verify the identity of every person, corporation, and other entity for which they open a credit card account before the credit card can be activated. This requirement applies regardless of whether the credit card is issued for the account holder or for someone else authorized to give instructions on the account."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 8
+=============================================================
+
+=============================================================
+Question: What is the threshold transaction amount in order for FEs to verify the identify of persons or entity who conduct or attempt to conduct suspicious transactions?
+Ground Truth: FEs must verify the identify of persons and entities who conduct or attempt to conduct suspicious transactions regarless of transaction amount.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain information regarding the threshold transaction amount for FEs (Financial Entities) to verify the identity of persons or entities involved in suspicious transactions. Therefore, I cannot provide an accurate answer based on the given context."}
+Elasticsearch RAG Candidate Answer: {"response": "According to the provided context, Financial Entities (FEs) are not required to verify the identity of persons or entities who conduct or attempt to conduct suspicious transactions, regardless of the transaction amount. This is stated under the section \"Suspicious transactions,\" where it mentions that FEs do not have to take reasonable measures to verify the identity if they have already verified the identity and have no doubts about the identification information, or if verifying the identity would inform the person or entity that an STR is being submitted. Therefore, there is no specific threshold transaction amount mentioned for verifying the identity of persons or entities in the context of suspicious transactions."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 8
+=============================================================
+
+=============================================================
+Question: When did this guidance on client identification come into effect?
+Ground Truth: The guidance came into effect on June 1, 2021.
+Routing question to super communities: [13]
+Chosen first-level communities: {13}
+GraphRAG Candidate Answer: {"response": "The context provided does not include specific information about when the guidance on client identification came into effect. Therefore, I cannot provide an accurate answer based on the given information."}
+Elasticsearch RAG Candidate Answer: {"response": "This guidance on client identification came into effect on June 1, 2021."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 9
+=============================================================
+
+=============================================================
+Question: What is the minimum amount that triggers identity verification for a large cash transaction?
+Ground Truth: Identity verification is required for cash transactions of $10,000 or more.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The context provided does not contain information regarding the minimum amount that triggers identity verification for a large cash transaction."}
+Elasticsearch RAG Candidate Answer: (No ES answer)
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 9
+=============================================================
+
+=============================================================
+Question: What is the threshold amount for verifying identity in international electronic funds transfers (EFT)?
+Ground Truth: Identity verification is required for international EFTs of $1,000 or more.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The provided context does not contain information regarding the threshold amount for verifying identity in international electronic funds transfers (EFT). Therefore, I cannot provide an accurate answer based on the given context."}
+Elasticsearch RAG Candidate Answer: {"response": "The threshold amount for verifying identity in international electronic funds transfers (EFT) is $1,000 or more."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 10
+=============================================================
+
+=============================================================
+Question: How does the "24-hour rule" apply to virtual currency transactions?
+Ground Truth: The 24-hour rule applies to virtual currency transactions equivalent to $10,000 or more, meaning transactions within a 24-hour period must be considered together when determining if the threshold is met.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "The \"24-hour rule\" does not directly apply to virtual currency transactions as per the provided context. The context only mentions \"records\" and \"metadata,\" which are general terms related to data management. The \"24-hour rule\" is typically associated with financial transactions, such as settling trades or resolving discrepancies, but it is not a standard term in virtual currency or blockchain technology. Therefore, without additional context, it's not possible to accurately describe how the \"24-hour rule\" would apply to virtual currency transactions."}
+Elasticsearch RAG Candidate Answer: {"response": "The \"24-hour rule\" applies to virtual currency (VC) transactions in the context provided, meaning that when a transaction involving VC equivalent to $10,000 or more takes place, the identity of the person or entity from which the VC is received must be verified. However, this obligation is subject to the 24-hour rule, which implies that there might be a specific timeframe within which this verification must be completed. The exact details of this timeframe are not provided in the context."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 10
+=============================================================
+
+=============================================================
+Question: In what situation would a financial entity NOT need to verify the identity of someone conducting a suspicious transaction?
+Ground Truth: A financial entity doesn't need to verify identity if:
+- They have already verified the person's identity and have no doubts about the identification information, or
+- They believe that verifying identity would tip off the person that a Suspicious Transaction Report (STR) is being submitted.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}
+GraphRAG Candidate Answer: {"response": "In no situation would a financial entity NOT need to verify the identity of someone conducting a suspicious transaction. Financial entities are legally obligated to verify the identity of all individuals involved in transactions to prevent financial crimes such as money laundering, terrorist financing, and fraud. This verification process is a critical part of their compliance with regulations like the Bank Secrecy Act (BSA) and Anti-Money Laundering (AML) laws. Even if a transaction appears suspicious, the entity must still verify the identity of the involved parties."}
+Elasticsearch RAG Candidate Answer: {"response": "A financial entity would not need to verify the identity of someone conducting a suspicious transaction if they have already verified the identity of the person or entity and have no doubts about the identification information, or if they believe that verifying the identity would inform the person that they are submitting a Suspicious Transaction Report (STR)."}
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 1
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 11
+=============================================================
+
+=============================================================
+Question: What are the verification requirements for credit card accounts with multiple cardholders?
+Ground Truth: The financial entity must verify the identity of all co-applicants (account holders) before the credit card can be activated, but does not need to verify the identity of additional cardholders who are not account holders, even if they are authorized to give instructions.
+Routing question to super communities: [3]
+Chosen first-level communities: {3}
+GraphRAG Candidate Answer: {"response": "The provided context does not contain specific information regarding the verification requirements for credit card accounts with multiple cardholders. For accurate details, please refer to the credit card issuer's official guidelines or contact their customer service. Generally, verification processes may involve confirming the identity of each cardholder, ensuring they meet the issuer's eligibility criteria, and possibly requiring additional documentation or authorization for transactions."}
+Elasticsearch RAG Candidate Answer: (No ES answer)
+GraphRAG Correctness (1/0): 0
+Elasticsearch RAG Correctness (1/0): 0
+Cumulative GraphRAG Score: 1
+Cumulative Elasticsearch RAG Score: 11
+=============================================================
+
+=============================================================
+Question: How do the client identification requirements differ between traditional currency exchange and virtual currency exchange?
+Ground Truth: Traditional currency exchange requires identity verification for transactions of $3,000 or more, while virtual currency exchange requires verification for transactions equivalent to $1,000 or more. This indicates a more stringent approach to virtual currency transactions.
+Routing question to super communities: [2]
+Chosen first-level communities: {2}

@@ -24,37 +24,37 @@ parameters = {
     "seed": 42  
 }
 
-llm_code = ChatWatsonx(
-    model_id=model_id_code,
-    url=url,
-    apikey=apikey,
-    project_id=project_id,
-    params=parameters
-)
+# llm_code = ChatWatsonx(
+#     model_id=model_id_code,
+#     url=url,
+#     apikey=apikey,
+#     project_id=project_id,
+#     params=parameters
+# )
 
-llm_mistral = ChatWatsonx(
-    model_id=model_id_mistral,
-    url=url,
-    apikey=apikey,
-    project_id=project_id,
-    params=parameters
-)
+# llm_mistral = ChatWatsonx(
+#     model_id=model_id_mistral,
+#     url=url,
+#     apikey=apikey,
+#     project_id=project_id,
+#     params=parameters
+# )
 
-llm_granite = ChatWatsonx(
-    model_id=model_id_granite,
-    url=url,
-    apikey=apikey,
-    project_id=project_id,
-    params=parameters
-)
+# llm_granite = ChatWatsonx(
+#     model_id=model_id_granite,
+#     url=url,
+#     apikey=apikey,
+#     project_id=project_id,
+#     params=parameters
+# )
 
-llm_llama = ChatWatsonx(
-    model_id=model_id_llama,
-    url=url,
-    apikey=apikey,
-    project_id=project_id,
-    params=parameters
-)
+# llm_llama = ChatWatsonx(
+#     model_id=model_id_llama,
+#     url=url,
+#     apikey=apikey,
+#     project_id=project_id,
+#     params=parameters
+# )
 
 llm_chat_gpt = ChatOpenAI(
     model="gpt-4o",

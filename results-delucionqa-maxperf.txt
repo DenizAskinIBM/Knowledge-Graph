@@ -1,0 +1,42 @@
+========================================
+Question: What if I fail to latch the tailgate properly?
+--- ES-based RAG ---
+Context:
+ Closing To close the tailgate, lift upward until both sides latch into place.  CAUTION: After closing, pull back on the tailgate firmly to ensure it is securely latched.  Failure to securely latch the tailgate could result in damage to the vehicle or cargo.  Note: If the Tonneau Cover is installed, make sure the Tonneau Cover is fully closed before closing the tailgate.  Due to the presence of the Center High-Mounted Stop Lamp, removal of the tailgate is not recommended.
+ If the Tonneau Cover is installed, make sure the Tonneau Cover is fully closed before closing the tailgate.  Due to the presence of the Center High-Mounted Stop Lamp, removal of the tailgate is not recommended.  After closing, pull back on the tailgate firmly to ensure it is securely latched.  Failure to securely latch the tailgate could result in damage to the vehicle or cargo.  To close the tailgate, lift upward until both sides latch into place.
+Answer:
+If you fail to latch the tailgate properly, it could result in damage to the vehicle or cargo.
+--- Global GraphRAG ---
+Answer:
+If you fail to latch the tailgate properly, it may not stay in place and could potentially move up or down while you're driving, which could interfere with the loading and unloading process. This could also pose a safety risk. Additionally, improper latching might affect the functioning of the Release Handle, potentially impacting the opening of the tailgate.
+--- Hybrid GraphRAG ---
+Answer:
+If you fail to latch the tailgate properly, it may not stay firmly in place as tailgate straps are used to secure the tailgate in its position. This could lead to the tailgate moving up or down unexpectedly, which could interfere with the process of loading and unloading the vehicle.
+ES-based RAG Score so far: 1
+Global GraphRAG Score so far: 0
+Hybrid GraphRAG Score so far: 1
+========================================
+Question: What kind of safety features are implemented in this car?
+--- ES-based RAG ---
+Context:
+ Some of the most important safety features in your vehicle are the restraint systems: ALWAYS obey traffic laws and pay attention to the road.  ALWAYS drive safely with your hands on the steering wheel.  You have full responsibility and assume all risks related to the use of the features and applications in this vehicle.  Only use the features and applications when it is safe to do so.  Failure to do so may result in an accident involving serious injury or death.  Always drive safely with your hands on the steering wheel and obey all applicable laws.  You have full responsibility and assume all risks related to the use of the features and applications in this vehicle.  Only use the features and applications in this vehicle when it is safe to do so.  Failure to comply may result in an accident involving in serious injury or death.
+ SAFETY FEATURES When the Safety/Driving Assistance button is selected on the touchscreen, the system displays the options related to the vehicle’s safety settings.  These options will differ depending on the features equipped on the vehicle.  The settings may display in list form or within subfolders on the screen.  To access a subfolder, select the desired folder; the available options related to that feature will then display on the screen.  Note: depending on the vehicle’s options, feature settings may vary.  OCCUPANT RESTRAINT SYSTEMS Some of the most important safety features in your vehicle are the restraint systems:
+Answer:
+The context does not provide specific details on what kind of safety features are implemented in this car.
+--- Global GraphRAG ---
+Answer:
+The specific safety features implemented in this car are not detailed in the provided summaries. However, it is mentioned that the car has customizable safety settings. These settings allow users to control and optimize the vehicle's installed safety features, designed to improve performance and safety.
+--- Hybrid GraphRAG ---
+Answer:
+The available information does not provide specific details on the types of safety features implemented in the car. However, it does mention a Safety/Driving Assistance button that, when activated, displays options related to the vehicle's safety settings.
+ES-based RAG Score so far: 1
+Global GraphRAG Score so far: 0
+Hybrid GraphRAG Score so far: 1
+========================================
+Question: When will the Automatic SOS be triggered?
+--- ES-based RAG ---
+Context:
+ Automatic SOS — If Equipped Automatic SOS is a hands-free safety service that can immediately connect you with help in the event that your vehicle’s airbags deploy.  Please refer to your provided radio supplement for complete information.
+ SOS Call Push the SOS Call button on the overhead console.  Note: in case the sos call button is pushed in error, there will be a 10 second delay before the sos call system initiates a call to an sos operator.  To cancel the SOS Call connection, push the SOS call button on the overhead console or press the cancellation button on the Device Screen.  Termination of the SOS Call will turn off the green LED light on the overhead console.  The LED light located within the ASSIST and SOS buttons on the overhead console will turn green once a connection to an SOS operator has been made.  Once a connection between the vehicle and an sos operator is made, the sos call system may transmit the following important vehicle information to an sos operator: indication that the occupant placed an sos call.  The vehicle brand.  The last known GPS coordinates of the vehicle.  You should be able to speak with the SOS operator through the vehicle audio system to determine if additional help is needed.  Warning: always obey traffic laws and pay attention to the road.  ALWAYS drive safely with your hands on the steering wheel.  You have full responsibility and assume all risks related to the use of the features and applications in this vehicle.  Only use the features and applications when it is safe to do so.  Failure to do so may result in an accident involving serious injury or death.  Note: your vehicle may be transmitting data as authorized by the subscriber.  Once a connection is made between the vehicle’s SOS Call system and the SOS operator, the SOS operator may be able to open a voice connection with the vehicle to determine if additional help is needed.  Once the SOS operator opens a voice connection with the vehicle’s SOS Call system, the operator should be able to speak with the vehicle occupants, and hear sounds occurring in the vehicle.  The vehicle’s SOS Call system will attempt to remain connected with the SOS operator until the SOS operator terminates the connection.  The SOS operator may attempt to contact appropriate emergency responders and provide them with important vehicle information and GPS coordinates.  WARNING: If anyone in the vehicle could be in danger (e.g., fire or smoke is visible, dangerous road conditions or location), do not wait for voice contact from an Emergency Services Agent.  All occupants should exit the vehicle immediately and move to a safe location.  Never place anything on or near the vehicle’s operable network and GPS antennas.  You could prevent operable network and GPS signal reception, which can prevent your vehicle from placing an emergency call.  An operable network and GPS signal reception is required for the SOS Call system to function properly.  The SOS Call system is embedded into the vehicle’s electrical system.  Do not add aftermarket electrical equipment to the vehicle’s electrical system.  This may prevent your vehicle from sending a signal to initiate an emergency call.  To avoid interference that can cause the SOS Call system to fail, never add aftermarket equipment (e.g., two-way mobile radio, CB radio, data recorder, etc.)  to your vehicle’s electrical system or modify the antennas on your vehicle.  IF YOUR VEHICLE LOSES BATTERY POWER FOR ANY REASON (INCLUDING DURING OR AFTER AN ACCIDENT), THE UCONNECT FEATURES, APPS AND SERVICES, AMONG OTHERS, WILL NOT OPERATE.  Modifications to any part of the SOS Call system could cause the air bag system to fail when you need it.  You could be injured if the air bag system is not there to help protect you.
+Answer:
+The Automatic SOS will be triggered in the event that your vehicle’s airbags deploy.

@@ -56,92 +56,92 @@ llm_openi_gpt = OpenAILLM(
 # Instantiate your custom LLM
 custom_llm = CustomLLM(model_name="meta-llama/llama-3-405b-instruct", model_params={"temperature": 0})
 
-## Use LLM Based Chunking
-advanced_chunking=False
+def create_full_text_graph_embeddings(transcripts, graph_full_text_index_name, embedder):
+    ## Use LLM Based Chunking
+    advanced_chunking=False
 
-# Define your splitter
-if(advanced_chunking):
-    text_splitter = None
-else:
-    text_splitter = FixedSizeSplitter(chunk_size=1000, chunk_overlap=50)
-
-# Instantiate the SimpleKGPipeline
-kg_builder = SimpleKGPipeline(
-    llm=llm_openi_gpt,
-    driver=driver,
-    embedder=embedding_model,
-    on_error="IGNORE",
-    from_pdf=False,
-    text_splitter=text_splitter
-)
-
-## Text to generate Knowledge Graphs from
-mortgage_loan_transcript_1 = read("datasets/transcripts/mortgage_loan_1_transcript.txt")
-mortgage_loan_transcript_2 = read("datasets/transcripts/mortgage_loan_2_transcript.txt")
-mortgage_loan_transcript_3 = read("datasets/transcripts/mortgage_loan_3_transcript.txt")
-transcripts=[mortgage_loan_transcript_1,mortgage_loan_transcript_2,mortgage_loan_transcript_3]
-transcripts=read("datasets/When_to_verify_the_identity_of_persons_and_entities—Financial_entities.md")
-
-if(isinstance(transcripts, list)):
+    # Define your splitter
     if(advanced_chunking):
-        for x in transcripts:
-             for y in chunking(x.strip(), prompt_chunking_chat_gpt, llm_chat_gpt).chunk: 
+        text_splitter = None
+    else:
+        text_splitter = FixedSizeSplitter(chunk_size=1000, chunk_overlap=50)
+
+    # Instantiate the SimpleKGPipeline
+    kg_builder = SimpleKGPipeline(
+        llm=llm_openi_gpt,
+        driver=driver,
+        embedder=embedder,
+        on_error="IGNORE",
+        from_pdf=False,
+    )
+    
+    if(isinstance(transcripts, list)):
+        if(advanced_chunking):
+            for x in transcripts:
+                for y in chunking(x.strip(), prompt_chunking_chat_gpt, llm_chat_gpt).chunk: 
+                    # Run the pipeline on a piece of text
+                    text = (
+                        y.strip()
+                    )
+                    asyncio.run(kg_builder.run_async(text=text))
+        else:
+            for x in transcripts:
                 # Run the pipeline on a piece of text
                 text = (
-                    y.strip()
+                    x.strip()
                 )
-                asyncio.run(kg_builder.run_async(text=text))
-else:
-    if(advanced_chunking):
-        for x in chunking(transcripts, prompt_chunking_chat_gpt, llm_chat_gpt).chunk: 
-        # Run the pipeline on a piece of text
+                asyncio.run(kg_builder.run_async(text=text)) 
+    else:
+        if(advanced_chunking):
+            for x in chunking(transcripts, prompt_chunking_chat_gpt, llm_chat_gpt).chunk: 
+            # Run the pipeline on a piece of text
+                text = (
+                    x.strip()
+                )
+                asyncio.run(kg_builder.run_async(text=text)) 
+        else:
+            # Run the pipeline on a piece of text
             text = (
-                x.strip()
+                transcripts.strip()
             )
             asyncio.run(kg_builder.run_async(text=text)) 
-    else:
-        # Run the pipeline on a piece of text
-        text = (
-            transcripts.strip()
-        )
-        asyncio.run(kg_builder.run_async(text=text)) 
 
-if(isinstance(embedding_model, SentenceTransformerEmbeddings)):
-    dimensions=transformer_model.get_sentence_embedding_dimension()
-else:
-    sample_embedding = open_ai_text_3_large_embedder.embed_query("sample text")
-    dimensions = len(sample_embedding)
+    create_fulltext_index(
+        driver,
+        graph_full_text_index_name,
+        label="Document",
+        node_properties=["vectorProperty"],
+        fail_if_exists=False,
+    )
+    # For Financial Document
+    # create_fulltext_index(
+    #     driver=driver,
+    #     name=index_name,
+    #     label="FinancialEntity",
+    #     node_properties=[
+    #         "TransactionType",
+    #         "ThresholdAmount",
+    #         "VerificationReason",
+    #         "EntityType",
+    #         "ExemptionCriteria",
+    #         "CurrencyType",
+    #         "VerificationMethod",
+    #         "AccountOpenings"
+    #     ],
+    #     fail_if_exists=False,
+    # )
 
+    # ## For Mortgage Document
+    # create_fulltext_index(
+    #     driver,
+    #     index_name,
+    #     label="MortgageTranscript",
+    #     node_properties=["conversationText", "customerName", "representativeName"],
+    #     fail_if_exists=False,
+    # )
 
-# For Financial Document
-create_fulltext_index(
-    driver=driver,
-    name=index_name,
-    label="FinancialEntity",
-    node_properties=[
-        "TransactionType",
-        "ThresholdAmount",
-        "VerificationReason",
-        "EntityType",
-        "ExemptionCriteria",
-        "CurrencyType",
-        "VerificationMethod",
-        "AccountOpenings"
-    ],
-    fail_if_exists=False,
-)
-
-# ## For Mortgage Document
-# create_fulltext_index(
-#     driver,
-#     index_name,
-#     label="MortgageTranscript",
-#     node_properties=["conversationText", "customerName", "representativeName"],
-#     fail_if_exists=False,
-# )
-
-# ## Set True if you want to delete the index you created
-delete_index=False
-if(delete_index):
-    drop_index_if_exists(driver, index_name)
-driver.close()
+    # ## Set True if you want to delete the index you created
+    delete_index=False
+    if(delete_index):
+        drop_index_if_exists(driver, index_name)
+    driver.close()
