@@ -20,8 +20,6 @@ langchain_cohere
 neo4j_graphrag
 cohere
 langchain_cohere
-neo4j-graphrag[sentence-transformers]
-ibm_watsonx
 ibm_cloud_sdk_core
 ibm-watson
 ollama
@@ -40,7 +38,8 @@ community
 gdsfactory
 spacy
 py2neo
-nltx
+nltk
 PyPDF2
 bs4
 langchain_nvidia_ai_endpoints
+langgraph
