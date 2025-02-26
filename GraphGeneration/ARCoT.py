@@ -4,6 +4,7 @@ import re
 import json
 import httpcore
 import sys
+import time
 from dotenv import load_dotenv
 from typing_extensions import TypedDict
 
@@ -14,9 +15,7 @@ from langgraph.graph import StateGraph, END
 
 load_dotenv()
 
-# Regex patterns
-THINK_BLOCK_PATTERN = re.compile(r"<think>(.*?)</think>", re.DOTALL)
-REVISED_THINK_BLOCK_PATTERN = re.compile(r"<revised_think>(.*?)</revised_think>", re.DOTALL)
+# Regex patterns (only needed now for the final answer and JSON extraction)
 JSON_RE = re.compile(r"\{.*\}", re.DOTALL)
 STRIP_TAGS_RE = re.compile(r"<.*?>")
 
@@ -35,16 +34,12 @@ class VerificationState(TypedDict):
 class TeeOutput:
     """Custom sys.stdout that writes to both console and a file, unbuffered."""
     def __init__(self, filename: str):
-        # buffering=1 means line-buffered in text mode; combined with flush() calls
-        # after every write, this effectively prints in real-time to file as well.
         self.file = open(filename, "w", encoding="utf-8", buffering=1)
         self.console = sys.__stdout__
 
     def write(self, data):
-        # Write to console unbuffered
         self.console.write(data)
         self.console.flush()
-        # Write to file unbuffered
         self.file.write(data)
         self.file.flush()
 
@@ -58,11 +53,7 @@ class AnsweringPrompt:
         "Keep the reasoning brief and directly relevant.\n"
         "Previous reasoning (if any): {reasoning_history}\n\n"
         "Question: {question}\n\n"
-        "Provide a brief, relevant chain-of-thought within <think> tags, then output only the final answer "
-        "within <answer> tags.\n"
-        "<think>\n"
-        "[Brief chain-of-thought]\n"
-        "</think>\n"
+        "Output only the final answer within <answer> tags.\n"
         "<answer>\n"
         "[Final answer]\n"
         "</answer>"
@@ -82,10 +73,7 @@ class ReviewerPrompt:
             "{feedback}\n\n"
             "Revise the reasoning using a different approach to solve the problem. "
             "Do not include any extra or irrelevant reasoning.\n\n"
-            "Output ONLY the revised chain-of-thought within <revised_think> tags.\n"
-            "<revised_think>\n"
-            "[Revised chain-of-thought]\n"
-            "</revised_think>"
+            "Output only the revised chain-of-thought.\n"
         )
     )
 
@@ -94,156 +82,138 @@ class ReviewerPrompt:
 ##########################################################################
 class EnhancedVerificationAgent:
     """
-    Implements a linear workflow:
-       generate_answer -> llm_as_a_judge -> revise_reasoning -> regenerate_answer
-
-    * Streams in real-time *.
+    Implements a workflow that cycles:
+       generate_answer → llm_as_a_judge → (if not CORRECT and retries remain) 
+       → revise_reasoning → regenerate_answer → llm_as_a_judge → ...
+    It repeats until the judge returns CORRECT or until max_retries is reached.
     """
 
     def __init__(self):
-        # Placeholder endpoint for demonstration.
         self.client = OpenAI(
-            base_url="https://integrate.api.nvidia.com/v1",
+            base_url="https://openrouter.ai/api/v1",
             api_key=os.getenv("NVIDIA_API_KEY")
         )
-        self.temperature = 0.1
-        self.max_tokens = 1000
+        # Requested max tokens
+        self.max_tokens = 128000
+        # Check against a presumed model limit (adjust MODEL_MAX as needed)
+        MODEL_MAX = 128000
+        if self.max_tokens > MODEL_MAX:
+            sys.stdout.write(f"[Warning] Requested max_tokens {self.max_tokens} exceeds the model limit of {MODEL_MAX}. Using {MODEL_MAX} instead.\n")
+            sys.stdout.flush()
+            self.max_tokens = MODEL_MAX
+
+        self.temperature = 0.8
         self.workflow = self.build_workflow().compile()
+        # This variable accumulates the chain-of-thought from delta.reasoning
+        self.extracted_reasoning = ""
 
     def invoke_llm(self, prompt: str, only_think: bool = False) -> str:
         """
         Invokes the LLM, streaming tokens as they arrive.
 
-        If only_think=True, we only print text that appears between <think>...</think>
-        in real time. Everything else (including <answer> tags) is captured but *not* printed.
-
-        If only_think=False, we print *all* tokens in real time.
+        If only_think is False, both normal content (including the <answer> block)
+        and chain-of-thought tokens (from delta.reasoning) are printed.
+        If only_think is True, only chain-of-thought tokens are printed.
+        The chain-of-thought is accumulated in self.extracted_reasoning,
+        and response_text collects content tokens.
+        A timeout is set to 600 seconds to keep the stream open even if generation lags.
+        Retries are attempted if a streaming error occurs.
         """
         response_text = ""
-        in_think_block = False
-        buffer = ""
+        self.extracted_reasoning = ""
+        last_token_time = time.time()
+        retries = 0
+        max_streaming_retries = 2
 
-        try:
-            completion = self.client.chat.completions.create(
-                model="deepseek-ai/deepseek-r1",
-                messages=[
-                    {"role": "system", "content": "You are an analytical problem solver. Keep chain-of-thoughts short."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=self.temperature,
-                max_tokens=self.max_tokens,
-                stream=True
-            )
-            for chunk in completion:
-                token = getattr(chunk.choices[0].delta, "content", "")
-                if not token:
-                    continue
+        while retries <= max_streaming_retries:
+            try:
+                completion = self.client.chat.completions.create(
+                    model="deepseek/deepseek-r1:free",
+                    messages=[
+                        {"role": "system", "content": "You are an analytical problem solver. Keep chain-of-thoughts short."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=self.temperature,
+                    max_tokens=self.max_tokens,
+                    stream=True,
+                    timeout=600
+                )
 
-                # Accumulate for later parsing
-                response_text += token
+                for chunk in completion:
+                    content = getattr(chunk.choices[0].delta, "content", "")
+                    reasoning = getattr(chunk.choices[0].delta, "reasoning", "")
 
-                # If we are printing everything, just print and flush
-                if not only_think:
-                    sys.stdout.write(token)
-                    sys.stdout.flush()
-                    continue
-
-                # If only_think=True, we parse and print only what's inside <think>...</think>
-                buffer += token
-                # We may get partial or complete tags. Process them in a loop:
-                while True:
-                    if not in_think_block:
-                        # We look for <think>
-                        start_idx = buffer.find("<think>")
-                        if start_idx == -1:
-                            # No opening tag found -> break
-                            break
-                        # Found an opening tag
-                        in_think_block = True
-                        # Discard everything up to (and including) <think> from the buffer
-                        buffer = buffer[start_idx + len("<think>"):]
-                    else:
-                        # Already in a <think> block. Look for closing </think>
-                        end_idx = buffer.find("</think>")
-                        if end_idx == -1:
-                            # No closing tag found -> print everything so far
-                            sys.stdout.write(buffer)
+                    if not only_think:
+                        if content:
+                            response_text += content
+                            sys.stdout.write(content)
                             sys.stdout.flush()
-                            buffer = ""  # empty it out
-                            break
-                        # If we found a closing tag
-                        content_to_print = buffer[:end_idx]
-                        sys.stdout.write(content_to_print)
+                            last_token_time = time.time()
+                        if reasoning:
+                            self.extracted_reasoning += reasoning
+                            sys.stdout.write(reasoning)
+                            sys.stdout.flush()
+                            last_token_time = time.time()
+                    else:
+                        if reasoning:
+                            self.extracted_reasoning += reasoning
+                            sys.stdout.write(reasoning)
+                            sys.stdout.flush()
+                            last_token_time = time.time()
+
+                    # If no tokens for more than 30 seconds, log and wait briefly.
+                    if time.time() - last_token_time > 30:
+                        sys.stdout.write("[Debug] More than 30 seconds since last token. Continuing wait.\n")
                         sys.stdout.flush()
+                        time.sleep(1)
+                break  # Completed streaming successfully; exit retry loop.
 
-                        # Remove that printed content + </think> from buffer
-                        buffer = buffer[end_idx + len("</think>"):]
-                        in_think_block = False
-
-            # End of streaming: If we ended inside a <think> with no closing tag,
-            # print whatever remains in the buffer
-            if only_think and in_think_block and buffer:
-                sys.stdout.write(buffer)
+            except httpcore.RemoteProtocolError as e:
+                sys.stdout.write(f"\n[Warning] Streaming interrupted on attempt {retries + 1}. Partial output used.\nError: {str(e)}\n")
                 sys.stdout.flush()
+                retries += 1
+                if retries <= max_streaming_retries:
+                    sys.stdout.write(f"[Info] Retrying streaming... Attempt {retries + 1}.\n")
+                    sys.stdout.flush()
+                    last_token_time = time.time()
+                else:
+                    break
+            except Exception as e:
+                sys.stdout.write(f"\n[Warning] An error occurred during streaming.\nError: {str(e)}\n")
+                sys.stdout.flush()
+                break
 
-            # Print a newline at the end of the entire stream (for neatness)
-            sys.stdout.write("\n")
-            sys.stdout.flush()
-
-        except httpcore.RemoteProtocolError as e:
-            sys.stdout.write(f"\n[Warning] Streaming interrupted. Partial output used.\nError: {str(e)}\n")
-            sys.stdout.flush()
-        except Exception as e:
-            sys.stdout.write(f"\n[Warning] An error occurred during streaming.\nError: {str(e)}\n")
-            sys.stdout.flush()
-
+        sys.stdout.write("\n")
+        sys.stdout.flush()
         return response_text.strip()
 
     def parse_response_tags(self, text: str) -> tuple[str, str]:
         """
-        Extract the chain-of-thought from <think>...</think>
-        and the final answer from <answer>...</answer>.
-        Ensures that reasoning and answer are returned even if incomplete.
+        Extracts the chain-of-thought from self.extracted_reasoning
+        and the final answer from <answer>...</answer> in the text.
         """
-        # Remove accidental <answer<think> blocks
-        cleaned_text = re.sub(r"<answer<think>.*?</think>", "", text, flags=re.DOTALL)
+        reasoning = self.extracted_reasoning
 
-        # Extract the first <think> block
-        m = re.search(r"<think>(.*?)</think>", cleaned_text, flags=re.DOTALL)
-        reasoning = m.group(1) if m else "Partial or missing reasoning."
-
-        # Remove all <think> blocks from the text so we can find <answer>
-        text_without_think = THINK_BLOCK_PATTERN.sub("", cleaned_text)
-        ans_start = text_without_think.find("<answer>")
-        ans_end = text_without_think.find("</answer>")
-        answer = ""
-        
+        ans_start = text.find("<answer>")
+        ans_end = text.find("</answer>")
         if ans_start != -1 and ans_end != -1:
-            answer = text_without_think[ans_start + len("<answer>"):ans_end]
+            answer = text[ans_start + len("<answer>"):ans_end]
         elif ans_start != -1:
-            answer = text_without_think[ans_start + len("<answer>"):]  # Capture partial answer
-            answer = answer.strip() + " (incomplete)"
+            answer = text[ans_start + len("<answer>"):]
+            sys.stdout.write("[Warning] Final answer tag not closed. Answer might be incomplete.\n")
+            sys.stdout.flush()
         else:
             answer = "No answer extracted."
 
         return strip_tags(reasoning).strip(), strip_tags(answer).strip()
 
-
     ############################################################
     # 1) generate_answer
     ############################################################
     def generate_answer(self, state: VerificationState) -> VerificationState:
-        """
-        Generates an initial answer. 
-        **Prints only <think> blocks** in real time (omits <answer> from streaming).
-        """
         prompt = AnsweringPrompt.PROMPT_TEMPLATE.format(
             question=state["question"],
-            reasoning_history=(
-                "No previous reasoning."
-                if not state["reasoning_history"]
-                else "\n\n".join(state["reasoning_history"][-3:])
-            )
+            reasoning_history=("No previous reasoning." if not state["reasoning_history"] else "\n\n".join(state["reasoning_history"][-3:]))
         )
 
         sys.stdout.write("=========================\n")
@@ -251,16 +221,12 @@ class EnhancedVerificationAgent:
         sys.stdout.write("=========================\n\n")
         sys.stdout.flush()
 
-        # Stream only chain-of-thought
-        full_response = self.invoke_llm(prompt, only_think=True)
-
-        # Parse out the reasoning and final answer
+        full_response = self.invoke_llm(prompt, only_think=False)
         reasoning, answer = self.parse_response_tags(full_response)
         if not reasoning:
             reasoning = "No chain-of-thought extracted."
         if not answer:
             answer = "No answer extracted."
-
         state["current_answer"] = answer
         state["reasoning_history"].append(reasoning)
         state["iteration"] += 1
@@ -277,54 +243,45 @@ class EnhancedVerificationAgent:
     # 2) llm_as_a_judge
     ############################################################
     def llm_as_a_judge(self, state: VerificationState) -> VerificationState:
-        """
-        Judge correctness of the current answer.
-        **Prints only <think> blocks** in real time (omits <answer> from streaming).
-        """
         prompt = (
             f"Validate this answer for '{state['question']}':\n"
             f"Answer: {state['current_answer']}\n"
             f"Reasoning History: {' → '.join(state['reasoning_history'][-2:])}\n\n"
-            "Output JSON with:\n"
-            "- \"status\": \"CORRECT\", \"PARTIAL\", or \"INCORRECT\"\n"
-            "- \"detailed_feedback\": Bullet points of issues\n"
-            "- \"retainable_elements\": Good parts to keep\n"
+            "Your response must be a valid JSON object and nothing else. Do not include any extra text or explanation.\n"
+            "Output JSON with the following keys:\n"
+            "- \"status\": should be either \"CORRECT\", \"PARTIAL\", or \"INCORRECT\".\n"
+            "- \"detailed_feedback\": bullet points of issues.\n"
+            "- \"retainable_elements\": good parts to keep.\n"
         )
 
         sys.stdout.write("=========================\n")
-        sys.stdout.write("LLM Judge's Chain of Thought from llm_as_a_judge\n")
+        sys.stdout.write("LLM Judge's Output\n")
         sys.stdout.write("=========================\n\n")
         sys.stdout.flush()
 
-        # Stream only chain-of-thought
-        response_text = self.invoke_llm(prompt, only_think=True)
-
-        # Remove chain-of-thought blocks to parse JSON
-        text_stripped = THINK_BLOCK_PATTERN.sub("", response_text)
-        text_stripped = REVISED_THINK_BLOCK_PATTERN.sub("", text_stripped)
-
-        match = JSON_RE.search(text_stripped)
+        # Capture full output (chain-of-thought and JSON) from the judge.
+        full_response = self.invoke_llm(prompt, only_think=False)
+        # Extract the JSON block from the full response.
+        match = JSON_RE.search(full_response)
         if not match:
-            state["judge_feedback"] = {
-                "status": "INCORRECT",
-                "detailed_feedback": "Invalid or missing JSON",
-                "retainable_elements": "None"
-            }
+            state["judge_feedback"] = {"status": "INCORRECT", "detailed_feedback": "Invalid or missing JSON", "retainable_elements": "None"}
             return state
 
         try:
             decision = json.loads(match.group())
         except json.JSONDecodeError:
-            decision = {
-                "status": "INCORRECT",
-                "detailed_feedback": "Invalid JSON",
-                "retainable_elements": "None"
-            }
+            decision = {"status": "INCORRECT", "detailed_feedback": "Invalid JSON", "retainable_elements": "None"}
 
         decision.setdefault("detailed_feedback", "No feedback")
         decision.setdefault("retainable_elements", "None")
 
-        sys.stdout.write("=========================\n")
+        # If no answer was generated, force judge status to INCORRECT.
+        if state["current_answer"].strip() in ("", "No answer extracted."):
+            decision["status"] = "INCORRECT"
+            decision["detailed_feedback"] = "No answer was generated."
+
+        # Print the JSON output in its own block.
+        sys.stdout.write("\n=========================\n")
         sys.stdout.write("LLM JSON Output\n")
         sys.stdout.write(json.dumps(decision, indent=2))
         sys.stdout.write("\n=========================\n")
@@ -337,16 +294,13 @@ class EnhancedVerificationAgent:
     # 3) revise_reasoning
     ############################################################
     def revise_reasoning(self, state: VerificationState) -> VerificationState:
-        """
-        Revise chain-of-thought based on judge feedback. 
-        **Prints ALL tokens** in real time.
-        """
         sys.stdout.write("=========================\n")
         sys.stdout.write("Revised Chain of Thought from revise_reasoning()\n")
         sys.stdout.write("=========================\n\n")
         sys.stdout.flush()
 
-        previous_reasoning = state["reasoning_history"][-1]
+        # Use the entire chain-of-thought history
+        previous_reasoning = "\n\n".join(state["reasoning_history"])
         feedback = state["judge_feedback"].get("detailed_feedback", "No feedback")
 
         prompt = ReviewerPrompt.REVISION_TEMPLATE.format(
@@ -355,23 +309,17 @@ class EnhancedVerificationAgent:
             feedback=feedback
         )
 
-        # Stream all tokens
         revised_text = self.invoke_llm(prompt, only_think=False)
-        revised_matches = REVISED_THINK_BLOCK_PATTERN.findall(revised_text)
-        revised_coT = revised_matches[-1].strip() if revised_matches else revised_text.strip()
+        # Now, since there are no <revised_think> tags, take the entire output as the revised chain-of-thought.
+        revised_coT = revised_text.strip()
 
-        # Update the last reasoning with the newly revised chain-of-thought
-        state["reasoning_history"][-1] = revised_coT
+        state["reasoning_history"].append(revised_coT)
         return state
 
     ############################################################
     # 4) regenerate_answer
     ############################################################
     def regenerate_answer(self, state: VerificationState) -> VerificationState:
-        """
-        Produce a final answer using the revised chain-of-thought.
-        **Prints ALL tokens** in real time.
-        """
         iteration_count = state["iteration"] + 1
         sys.stdout.write("=========================\n")
         sys.stdout.write(f"Regenerated Answer's Chain of Thought #{iteration_count}\n")
@@ -383,10 +331,7 @@ class EnhancedVerificationAgent:
             reasoning_history="\n\n".join(state["reasoning_history"][-3:])
         )
 
-        # Stream all tokens
         response_text = self.invoke_llm(prompt, only_think=False)
-
-        # Parse out final answer
         reasoning, answer = self.parse_response_tags(response_text)
         if not answer:
             answer = "No answer extracted."
@@ -403,7 +348,7 @@ class EnhancedVerificationAgent:
         return state
 
     ############################################################
-    # Build LangGraph Workflow (strict linear)
+    # Build Workflow with Judge → Revise → Regenerate → Judge cycle
     ############################################################
     def build_workflow(self):
         workflow = StateGraph(VerificationState)
@@ -415,9 +360,12 @@ class EnhancedVerificationAgent:
         workflow.set_entry_point("generate_answer")
         workflow.add_edge("generate_answer", "llm_as_a_judge")
 
-        # Condition: If judge says "CORRECT", end. Otherwise, revise.
         def judge_condition(state: VerificationState):
-            return "accept" if state["judge_feedback"].get("status") == "CORRECT" else "revise"
+            if state["judge_feedback"].get("status") == "CORRECT":
+                return "accept"
+            if state["iteration"] >= state["max_retries"]:
+                return "accept"
+            return "revise"
 
         workflow.add_conditional_edges("llm_as_a_judge", judge_condition, {
             "accept": END,
@@ -425,35 +373,26 @@ class EnhancedVerificationAgent:
         })
 
         workflow.add_edge("revise_reasoning", "regenerate_answer")
-        workflow.add_edge("regenerate_answer", END)
+        workflow.add_edge("regenerate_answer", "llm_as_a_judge")
         return workflow
 
     def run(self, question: str) -> VerificationState:
-        """
-        Entry point to run the entire workflow on a single question.
-        """
         state: VerificationState = {
             "question": question,
             "current_answer": "",
             "reasoning_history": [],
             "judge_feedback": {},
             "iteration": 0,
-            "max_retries": 1
+            "max_retries": 3
         }
-        # Run the compiled workflow
         state = self.workflow.invoke(state)
         return state
 
 if __name__ == "__main__":
-    # This ensures we see unbuffered output in many shells:
-    #   PYTHONUNBUFFERED=1 python -u deepseek_experiment.py
-    # Or you can set it in the environment or run with -u explicitly.
-
     sys.stdout = TeeOutput("output_log.txt")
     agent = EnhancedVerificationAgent()
     question_text = "What letter comes next in this series: W, L, C, N, I, T?"
     final_state = agent.run(question_text)
-
     sys.stdout.write("\n===== FINAL ANSWER =====\n")
     sys.stdout.write(f"{final_state['current_answer']}\n")
     sys.stdout.write("========================\n\n")
