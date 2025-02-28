@@ -89,35 +89,36 @@ class EnhancedVerificationAgent:
     """
 
     def __init__(self):
+        # Use the same credentials & base_url as in Code #1
         self.client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=os.getenv("NVIDIA_API_KEY")
+            api_key=os.getenv("DEEPSEEK_API_KEY"),
+            base_url="https://api.deepseek.com"
         )
-        # Requested max tokens
-        self.max_tokens = 128000
-        # Check against a presumed model limit (adjust MODEL_MAX as needed)
+        
+        # Keep Code #2's logic for max_tokens/temperature
+        self.max_tokens = 8192  
         MODEL_MAX = 128000
+
         if self.max_tokens > MODEL_MAX:
             sys.stdout.write(f"[Warning] Requested max_tokens {self.max_tokens} exceeds the model limit of {MODEL_MAX}. Using {MODEL_MAX} instead.\n")
             sys.stdout.flush()
             self.max_tokens = MODEL_MAX
 
-        self.temperature = 0.8
+        self.temperature = 0.1
         self.workflow = self.build_workflow().compile()
-        # This variable accumulates the chain-of-thought from delta.reasoning
+        # This variable accumulates the chain-of-thought from delta.reasoning_content
         self.extracted_reasoning = ""
 
     def invoke_llm(self, prompt: str, only_think: bool = False) -> str:
         """
-        Invokes the LLM, streaming tokens as they arrive.
+        Invokes the LLM, streaming tokens as they arrive, printing them in real-time.
 
-        If only_think is False, both normal content (including the <answer> block)
-        and chain-of-thought tokens (from delta.reasoning) are printed.
-        If only_think is True, only chain-of-thought tokens are printed.
-        The chain-of-thought is accumulated in self.extracted_reasoning,
-        and response_text collects content tokens.
-        A timeout is set to 600 seconds to keep the stream open even if generation lags.
-        Retries are attempted if a streaming error occurs.
+        We read two types of token deltas:
+          - reasoning_content: the chain-of-thought
+          - content: final answer tokens
+
+        If only_think=True, we only display the chain-of-thought tokens on screen.
+        Otherwise we display both.
         """
         response_text = ""
         self.extracted_reasoning = ""
@@ -127,8 +128,9 @@ class EnhancedVerificationAgent:
 
         while retries <= max_streaming_retries:
             try:
+                # Use the same model name from Code #1, or keep your own if it exists in deepseek
                 completion = self.client.chat.completions.create(
-                    model="deepseek/deepseek-r1:free",
+                    model="deepseek-reasoner",  # or "deepseek/deepseek-r1:free" if valid on this base_url
                     messages=[
                         {"role": "system", "content": "You are an analytical problem solver. Keep chain-of-thoughts short."},
                         {"role": "user", "content": prompt}
@@ -140,24 +142,29 @@ class EnhancedVerificationAgent:
                 )
 
                 for chunk in completion:
-                    content = getattr(chunk.choices[0].delta, "content", "")
-                    reasoning = getattr(chunk.choices[0].delta, "reasoning", "")
+                    delta = chunk.choices[0].delta
+                    # In DeepSeek, chain-of-thought is in reasoning_content
+                    reasoning_content = getattr(delta, "reasoning_content", "")
+                    content = getattr(delta, "content", "")
 
-                    if not only_think:
-                        if content:
-                            response_text += content
-                            sys.stdout.write(content)
-                            sys.stdout.flush()
-                            last_token_time = time.time()
-                        if reasoning:
-                            self.extracted_reasoning += reasoning
-                            sys.stdout.write(reasoning)
+                    # Print chain-of-thought (if only_think=False, or always if only_think=True)
+                    if only_think:
+                        # Show chain-of-thought tokens only
+                        if reasoning_content:
+                            self.extracted_reasoning += reasoning_content
+                            sys.stdout.write(reasoning_content)
                             sys.stdout.flush()
                             last_token_time = time.time()
                     else:
-                        if reasoning:
-                            self.extracted_reasoning += reasoning
-                            sys.stdout.write(reasoning)
+                        # Show everything
+                        if reasoning_content:
+                            self.extracted_reasoning += reasoning_content
+                            sys.stdout.write(reasoning_content)
+                            sys.stdout.flush()
+                            last_token_time = time.time()
+                        if content:
+                            response_text += content
+                            sys.stdout.write(content)
                             sys.stdout.flush()
                             last_token_time = time.time()
 
@@ -213,7 +220,10 @@ class EnhancedVerificationAgent:
     def generate_answer(self, state: VerificationState) -> VerificationState:
         prompt = AnsweringPrompt.PROMPT_TEMPLATE.format(
             question=state["question"],
-            reasoning_history=("No previous reasoning." if not state["reasoning_history"] else "\n\n".join(state["reasoning_history"][-3:]))
+            reasoning_history=(
+                "No previous reasoning." if not state["reasoning_history"] 
+                else "\n\n".join(state["reasoning_history"][-3:])
+            )
         )
 
         sys.stdout.write("=========================\n")
@@ -259,28 +269,32 @@ class EnhancedVerificationAgent:
         sys.stdout.write("=========================\n\n")
         sys.stdout.flush()
 
-        # Capture full output (chain-of-thought and JSON) from the judge.
         full_response = self.invoke_llm(prompt, only_think=False)
-        # Extract the JSON block from the full response.
         match = JSON_RE.search(full_response)
         if not match:
-            state["judge_feedback"] = {"status": "INCORRECT", "detailed_feedback": "Invalid or missing JSON", "retainable_elements": "None"}
+            state["judge_feedback"] = {
+                "status": "INCORRECT", 
+                "detailed_feedback": "Invalid or missing JSON", 
+                "retainable_elements": "None"
+            }
             return state
 
         try:
             decision = json.loads(match.group())
         except json.JSONDecodeError:
-            decision = {"status": "INCORRECT", "detailed_feedback": "Invalid JSON", "retainable_elements": "None"}
+            decision = {
+                "status": "INCORRECT", 
+                "detailed_feedback": "Invalid JSON", 
+                "retainable_elements": "None"
+            }
 
         decision.setdefault("detailed_feedback", "No feedback")
         decision.setdefault("retainable_elements", "None")
 
-        # If no answer was generated, force judge status to INCORRECT.
         if state["current_answer"].strip() in ("", "No answer extracted."):
             decision["status"] = "INCORRECT"
             decision["detailed_feedback"] = "No answer was generated."
 
-        # Print the JSON output in its own block.
         sys.stdout.write("\n=========================\n")
         sys.stdout.write("LLM JSON Output\n")
         sys.stdout.write(json.dumps(decision, indent=2))
@@ -299,7 +313,6 @@ class EnhancedVerificationAgent:
         sys.stdout.write("=========================\n\n")
         sys.stdout.flush()
 
-        # Use the entire chain-of-thought history
         previous_reasoning = "\n\n".join(state["reasoning_history"])
         feedback = state["judge_feedback"].get("detailed_feedback", "No feedback")
 
@@ -310,7 +323,6 @@ class EnhancedVerificationAgent:
         )
 
         revised_text = self.invoke_llm(prompt, only_think=False)
-        # Now, since there are no <revised_think> tags, take the entire output as the revised chain-of-thought.
         revised_coT = revised_text.strip()
 
         state["reasoning_history"].append(revised_coT)
@@ -393,7 +405,9 @@ if __name__ == "__main__":
     agent = EnhancedVerificationAgent()
     question_text = "What letter comes next in this series: W, L, C, N, I, T?"
     final_state = agent.run(question_text)
+    # -- ONLY CHANGE BELOW THIS POINT --
     sys.stdout.write("\n===== FINAL ANSWER =====\n")
-    sys.stdout.write(f"{final_state['current_answer']}\n")
+    # Force the final answer to be between the special tags ,answer> and </answer>
+    sys.stdout.write(f",answer>{final_state['current_answer']}</answer>\n")
     sys.stdout.write("========================\n\n")
     sys.stdout.flush()
