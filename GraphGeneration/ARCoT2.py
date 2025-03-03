@@ -15,7 +15,7 @@ from langgraph.graph import StateGraph, END
 
 load_dotenv()
 
-# Regex patterns (only needed now for the final answer and JSON extraction)
+# Regex patterns
 JSON_RE = re.compile(r"\{.*\}", re.DOTALL)
 STRIP_TAGS_RE = re.compile(r"<.*?>")
 
@@ -30,6 +30,7 @@ class VerificationState(TypedDict):
     judge_feedback: dict
     iteration: int
     max_retries: int
+    judge_history: list[dict]
 
 class TeeOutput:
     """Custom sys.stdout that writes to both console and a file, unbuffered."""
@@ -63,39 +64,38 @@ class AnsweringPrompt:
         template=BASE_TEMPLATE
     )
 
-class ReviewerPrompt:
-    REVISION_TEMPLATE = PromptTemplate(
-        input_variables=["question", "previous_reasoning", "feedback"],
-        template=(
-            "Previous Reasoning Attempt:\n"
-            "{previous_reasoning}\n\n"
-            "Validation Feedback:\n"
-            "{feedback}\n\n"
-            "Revise the reasoning using a different approach to solve the problem. "
-            "Do not include any extra or irrelevant reasoning.\n\n"
-            "Output only the revised chain-of-thought.\n"
-        )
-    )
-
 ##########################################################################
-# LangGraph-based EnhancedVerificationAgent using strict workflow
+# LangGraph-based EnhancedVerificationAgent using simplified workflow
 ##########################################################################
 class EnhancedVerificationAgent:
     """
-    Implements a workflow that cycles:
-       generate_answer → llm_as_a_judge → (if not CORRECT and retries remain) 
-       → revise_reasoning → regenerate_answer → llm_as_a_judge → ...
-    It repeats until the judge returns CORRECT or until max_retries is reached.
+    Simplified workflow:
+        generate_answer -> llm_as_a_judge -> regenerate_answer
+    Repeats until judge returns "TRUE" or max_retries is reached.
+
+    - generate_answer: Generates an answer without passing any chain-of-thought
+      to the prompt (initial, cold start).
+    - llm_as_a_judge: Decides if the answer follows logically from the chain-of-thought.
+      Additionally, we do an internal check (not revealed to the LLM) for correctness.
+      In this scenario, we know that the correct letter is 'S', but we do NOT
+      tell that to the LLM's prompt.
+    - regenerate_answer: If the judge deems the answer incorrect, we prompt the LLM to
+      revise the reasoning, referring only to judge feedback that the previous attempt
+      did not logically produce the correct letter.
+
+    The code does NOT reveal the correct letter 'S' to the LLM in any prompt.
+    Instead, the code checks correctness on its own (internally) and triggers regeneration
+    if the answer is not 'S'.
+
+    Temperature for each agent can be set via the self.agent_temperatures dictionary.
     """
 
     def __init__(self):
-        # Use the same credentials & base_url as in Code #1
         self.client = OpenAI(
             api_key=os.getenv("DEEPSEEK_API_KEY"),
             base_url="https://api.deepseek.com"
         )
         
-        # Keep Code #2's logic for max_tokens/temperature
         self.max_tokens = 8192  
         MODEL_MAX = 128000
 
@@ -104,42 +104,42 @@ class EnhancedVerificationAgent:
             sys.stdout.flush()
             self.max_tokens = MODEL_MAX
 
-        self.temperature = 0.1
+        # Default temperatures for each agent; modify these values as needed.
+        self.agent_temperatures = {
+            "generate_answer": 0.7,
+            "llm_as_a_judge": 0.0,
+            "regenerate_answer": 0.9
+        }
+
         self.workflow = self.build_workflow().compile()
-        png_graph = self.workflow.get_graph(xray=True).draw_mermaid_png()
 
-        with open("workflow_graph_ARCoT.png", "wb") as f:
-            f.write(png_graph)
-        # This variable accumulates the chain-of-thought from delta.reasoning_content
+        # Holds the raw chain-of-thought from streaming.
         self.extracted_reasoning = ""
 
-    def invoke_llm(self, prompt: str, only_think: bool = False) -> str:
-        """
-        Invokes the LLM, streaming tokens as they arrive, printing them in real-time.
-
-        We read two types of token deltas:
-          - reasoning_content: the chain-of-thought
-          - content: final answer tokens
-
-        If only_think=True, we only display the chain-of-thought tokens on screen.
-        Otherwise we display both.
-        """
+    ########################################################################
+    # invoke_llm METHOD – printing tokens in real-time and then printing final aligned output
+    ########################################################################
+    def invoke_llm(self, prompt: str, only_think: bool = False, temperature: float = None) -> str:
+        self.extracted_reasoning = ""
         response_text = ""
-        self.extracted_reasoning = ""
+        reasoning_accumulator = []  # Accumulate chain-of-thought tokens
+        answer_accumulator = []     # Accumulate final answer tokens
+
+        temp = temperature  # The specific temperature for this call
+
         last_token_time = time.time()
         retries = 0
         max_streaming_retries = 2
 
         while retries <= max_streaming_retries:
             try:
-                # Use the same model name from Code #1, or keep your own if it exists in deepseek
                 completion = self.client.chat.completions.create(
-                    model="deepseek-reasoner",  # or "deepseek/deepseek-r1:free" if valid on this base_url
+                    model="deepseek-reasoner",
                     messages=[
                         {"role": "system", "content": "You are an analytical problem solver. Keep chain-of-thoughts short."},
                         {"role": "user", "content": prompt}
                     ],
-                    temperature=self.temperature,
+                    temperature=temp,
                     max_tokens=self.max_tokens,
                     stream=True,
                     timeout=600
@@ -147,37 +147,27 @@ class EnhancedVerificationAgent:
 
                 for chunk in completion:
                     delta = chunk.choices[0].delta
-                    # In DeepSeek, chain-of-thought is in reasoning_content
                     reasoning_content = getattr(delta, "reasoning_content", "")
                     content = getattr(delta, "content", "")
 
-                    # Print chain-of-thought (if only_think=False, or always if only_think=True)
-                    if only_think:
-                        # Show chain-of-thought tokens only
-                        if reasoning_content:
-                            self.extracted_reasoning += reasoning_content
-                            sys.stdout.write(reasoning_content)
-                            sys.stdout.flush()
-                            last_token_time = time.time()
-                    else:
-                        # Show everything
-                        if reasoning_content:
-                            self.extracted_reasoning += reasoning_content
-                            sys.stdout.write(reasoning_content)
-                            sys.stdout.flush()
-                            last_token_time = time.time()
-                        if content:
-                            response_text += content
-                            sys.stdout.write(content)
-                            sys.stdout.flush()
-                            last_token_time = time.time()
+                    # Print tokens in real-time and accumulate them.
+                    if reasoning_content:
+                        reasoning_accumulator.append(reasoning_content)
+                        sys.stdout.write(reasoning_content)
+                        sys.stdout.flush()
+                        last_token_time = time.time()
 
-                    # If no tokens for more than 30 seconds, log and wait briefly.
+                    if content:
+                        answer_accumulator.append(content)
+                        sys.stdout.write(content)
+                        sys.stdout.flush()
+                        last_token_time = time.time()
+
                     if time.time() - last_token_time > 30:
                         sys.stdout.write("[Debug] More than 30 seconds since last token. Continuing wait.\n")
                         sys.stdout.flush()
                         time.sleep(1)
-                break  # Completed streaming successfully; exit retry loop.
+                break
 
             except httpcore.RemoteProtocolError as e:
                 sys.stdout.write(f"\n[Warning] Streaming interrupted on attempt {retries + 1}. Partial output used.\nError: {str(e)}\n")
@@ -194,17 +184,26 @@ class EnhancedVerificationAgent:
                 sys.stdout.flush()
                 break
 
-        sys.stdout.write("\n")
+        # Join the accumulated tokens.
+        self.extracted_reasoning = "".join(reasoning_accumulator)
+        response_text = "".join(answer_accumulator)
+
+        # Print final output block, omitting the raw <answer> text from the chain-of-thought display
+        sys.stdout.write("\n\n===== FINAL OUTPUT =====\n")
+        sys.stdout.write("FINAL CHAIN-OF-THOUGHT:\n")
+        reasoning_only = self.extracted_reasoning.split("<answer>")[0]
+        sys.stdout.write(reasoning_only + "\n")
+        if not only_think:
+            sys.stdout.write("FINAL ANSWER:\n")
+            sys.stdout.write(response_text + "\n")
+        sys.stdout.write("========================\n\n")
         sys.stdout.flush()
+
         return response_text.strip()
 
     def parse_response_tags(self, text: str) -> tuple[str, str]:
-        """
-        Extracts the chain-of-thought from self.extracted_reasoning
-        and the final answer from <answer>...</answer> in the text.
-        """
-        reasoning = self.extracted_reasoning
-
+        # We parse out the chain-of-thought (before <answer>) and the answer (within <answer> ... </answer>)
+        reasoning_raw = self.extracted_reasoning.split("<answer>")[0]
         ans_start = text.find("<answer>")
         ans_end = text.find("</answer>")
         if ans_start != -1 and ans_end != -1:
@@ -216,18 +215,15 @@ class EnhancedVerificationAgent:
         else:
             answer = "No answer extracted."
 
-        return strip_tags(reasoning).strip(), strip_tags(answer).strip()
+        return reasoning_raw.strip(), strip_tags(answer).strip()
 
     ############################################################
-    # 1) generate_answer
+    # (1) generate_answer
     ############################################################
-    def generate_answer(self, state: VerificationState) -> VerificationState:
+    def generate_answer(self, state: dict) -> dict:
         prompt = AnsweringPrompt.PROMPT_TEMPLATE.format(
             question=state["question"],
-            reasoning_history=(
-                "No previous reasoning." if not state["reasoning_history"] 
-                else "\n\n".join(state["reasoning_history"][-3:])
-            )
+            reasoning_history=""
         )
 
         sys.stdout.write("=========================\n")
@@ -235,12 +231,18 @@ class EnhancedVerificationAgent:
         sys.stdout.write("=========================\n\n")
         sys.stdout.flush()
 
-        full_response = self.invoke_llm(prompt, only_think=False)
+        full_response = self.invoke_llm(
+            prompt, 
+            only_think=True, 
+            temperature=self.agent_temperatures["generate_answer"]
+        )
         reasoning, answer = self.parse_response_tags(full_response)
+
         if not reasoning:
             reasoning = "No chain-of-thought extracted."
         if not answer:
             answer = "No answer extracted."
+
         state["current_answer"] = answer
         state["reasoning_history"].append(reasoning)
         state["iteration"] += 1
@@ -254,18 +256,29 @@ class EnhancedVerificationAgent:
         return state
 
     ############################################################
-    # 2) llm_as_a_judge
+    # (2) llm_as_a_judge
     ############################################################
-    def llm_as_a_judge(self, state: VerificationState) -> VerificationState:
+    def llm_as_a_judge(self, state: dict) -> dict:
+        """
+        This step checks if the final answer logically follows from the chain-of-thought.
+        Then we (internally) check correctness: we know the next letter should be 'S',
+        but we do NOT reveal that to the LLM's prompt. We only do an internal check here.
+        If the answer is not 'S', we mark 'Answer_follows_from_chain_of_thought' as 'FALSE'.
+        """
+        judge_reasoning_snippet = state["reasoning_history"][-1] if state["reasoning_history"] else ""
+
+        # Prompt the LLM to see if the chain-of-thought is self-consistent.
+        # We do NOT reveal the correct letter. We only ask if the final answer follows logically.
+        # The LLM's JSON reply is not final: we override with 'FALSE' if the final answer is not 'S'.
         prompt = (
-            f"Validate this answer for '{state['question']}':\n"
-            f"Answer: {state['current_answer']}\n"
-            f"Reasoning History: {' → '.join(state['reasoning_history'][-2:])}\n\n"
-            "Your response must be a valid JSON object and nothing else. Do not include any extra text or explanation.\n"
-            "Output JSON with the following keys:\n"
-            "- \"status\": should be either \"CORRECT\", \"PARTIAL\", or \"INCORRECT\".\n"
-            "- \"detailed_feedback\": bullet points of issues.\n"
-            "- \"retainable_elements\": good parts to keep.\n"
+            "You are verifying if the final answer logically follows from this chain-of-thought:\n\n"
+            f"Chain-of-thought: {judge_reasoning_snippet}\n\n"
+            f"Answer: {state['current_answer']}\n\n"
+            "You must respond only with a JSON object of the form:\n"
+            "{\n"
+            "  \"Answer_follows_from_chain_of_thought\": \"TRUE\" or \"FALSE\"\n"
+            "}\n"
+            "No extra keys or text."
         )
 
         sys.stdout.write("=========================\n")
@@ -273,82 +286,82 @@ class EnhancedVerificationAgent:
         sys.stdout.write("=========================\n\n")
         sys.stdout.flush()
 
-        full_response = self.invoke_llm(prompt, only_think=False)
+        full_response = self.invoke_llm(
+            prompt, 
+            only_think=False, 
+            temperature=self.agent_temperatures["llm_as_a_judge"]
+        )
+
+        # Try to parse the JSON
         match = JSON_RE.search(full_response)
         if not match:
-            state["judge_feedback"] = {
-                "status": "INCORRECT", 
-                "detailed_feedback": "Invalid or missing JSON", 
-                "retainable_elements": "None"
-            }
-            return state
+            judge_result = {"Answer_follows_from_chain_of_thought": "FALSE"}
+        else:
+            try:
+                judge_result = json.loads(match.group())
+            except json.JSONDecodeError:
+                judge_result = {"Answer_follows_from_chain_of_thought": "FALSE"}
 
-        try:
-            decision = json.loads(match.group())
-        except json.JSONDecodeError:
-            decision = {
-                "status": "INCORRECT", 
-                "detailed_feedback": "Invalid JSON", 
-                "retainable_elements": "None"
-            }
+        # Internal correctness check: if the final answer is not 'S', we override judge_result to 'FALSE'.
+        # The LLM is never told that 'S' is correct. This is purely internal in code.
+        if state["current_answer"].strip().upper() != "S":
+            judge_result["Answer_follows_from_chain_of_thought"] = "FALSE"
 
-        decision.setdefault("detailed_feedback", "No feedback")
-        decision.setdefault("retainable_elements", "None")
-
-        if state["current_answer"].strip() in ("", "No answer extracted."):
-            decision["status"] = "INCORRECT"
-            decision["detailed_feedback"] = "No answer was generated."
+        state["judge_feedback"] = judge_result
+        state["judge_history"].append(judge_result)
 
         sys.stdout.write("\n=========================\n")
         sys.stdout.write("LLM JSON Output\n")
-        sys.stdout.write(json.dumps(decision, indent=2))
+        sys.stdout.write(json.dumps(judge_result, indent=2))
         sys.stdout.write("\n=========================\n")
         sys.stdout.flush()
 
-        state["judge_feedback"] = decision
         return state
 
     ############################################################
-    # 3) revise_reasoning
+    # (3) regenerate_answer
     ############################################################
-    def revise_reasoning(self, state: VerificationState) -> VerificationState:
-        sys.stdout.write("=========================\n")
-        sys.stdout.write("Revised Chain of Thought from revise_reasoning()\n")
-        sys.stdout.write("=========================\n\n")
-        sys.stdout.flush()
-
-        previous_reasoning = "\n\n".join(state["reasoning_history"])
-        feedback = state["judge_feedback"].get("detailed_feedback", "No feedback")
-
-        prompt = ReviewerPrompt.REVISION_TEMPLATE.format(
-            question=state["question"],
-            previous_reasoning=previous_reasoning,
-            feedback=feedback
-        )
-
-        revised_text = self.invoke_llm(prompt, only_think=False)
-        revised_coT = revised_text.strip()
-
-        state["reasoning_history"].append(revised_coT)
-        return state
-
-    ############################################################
-    # 4) regenerate_answer
-    ############################################################
-    def regenerate_answer(self, state: VerificationState) -> VerificationState:
+    def regenerate_answer(self, state: dict) -> dict:
+        """
+        If the judge deems the answer incorrect, we ask the LLM to try again.
+        We do NOT reveal the correct letter. Instead, we provide the judge feedback
+        in a minimal textual summary, saying the previous approach was not correct.
+        """
         iteration_count = state["iteration"] + 1
         sys.stdout.write("=========================\n")
         sys.stdout.write(f"Regenerated Answer's Chain of Thought #{iteration_count}\n")
         sys.stdout.write("=========================\n\n")
         sys.stdout.flush()
 
-        prompt = AnsweringPrompt.PROMPT_TEMPLATE.format(
-            question=state["question"],
-            reasoning_history="\n\n".join(state["reasoning_history"][-3:])
+        # Summarize the judge feedback
+        combined_history = ""
+        for i, fb in enumerate(state["judge_history"]):
+            combined_history += f"Attempt {i+1} Judge Feedback: {fb}\n"
+
+        leading_instruction = (
+            "Your previous attempt(s) did not yield a correct next letter according to the judge. "
+            "You must produce a different chain-of-thought that leads to the correct next letter. "
+            "Try to find a definitive pattern or reasoning that ensures the correct letter. "
+            "Use a new approach, ignoring previous flawed numerical reasoning.\n\n"
         )
 
-        response_text = self.invoke_llm(prompt, only_think=False)
+        prompt_content = (
+            leading_instruction +
+            AnsweringPrompt.PROMPT_TEMPLATE.format(
+                question=state["question"],
+                reasoning_history=combined_history
+            )
+        )
+
+        response_text = self.invoke_llm(
+            prompt_content, 
+            only_think=False, 
+            temperature=self.agent_temperatures["regenerate_answer"]
+        )
         reasoning, answer = self.parse_response_tags(response_text)
+
+        if not reasoning:
+            reasoning = "No chain-of-thought extracted."
         if not answer:
             answer = "No answer extracted."
 
@@ -361,34 +374,36 @@ class EnhancedVerificationAgent:
         state["current_answer"] = strip_tags(answer)
         state["reasoning_history"].append(strip_tags(reasoning))
         state["iteration"] += 1
+
         return state
 
     ############################################################
-    # Build Workflow with Judge → Revise → Regenerate → Judge cycle
+    # Build Workflow: generate_answer -> llm_as_a_judge -> regenerate_answer
     ############################################################
     def build_workflow(self):
         workflow = StateGraph(VerificationState)
         workflow.add_node("generate_answer", self.generate_answer)
         workflow.add_node("llm_as_a_judge", self.llm_as_a_judge)
-        workflow.add_node("revise_reasoning", self.revise_reasoning)
         workflow.add_node("regenerate_answer", self.regenerate_answer)
 
         workflow.set_entry_point("generate_answer")
         workflow.add_edge("generate_answer", "llm_as_a_judge")
 
         def judge_condition(state: VerificationState):
-            if state["judge_feedback"].get("status") == "CORRECT":
+            # We rely on the "Answer_follows_from_chain_of_thought" from the judge feedback
+            # or the internal correctness check to see if we accept or regenerate.
+            follows = state["judge_feedback"].get("Answer_follows_from_chain_of_thought", "FALSE")
+            if follows == "TRUE":
                 return "accept"
             if state["iteration"] >= state["max_retries"]:
                 return "accept"
-            return "revise"
+            return "regenerate"
 
         workflow.add_conditional_edges("llm_as_a_judge", judge_condition, {
             "accept": END,
-            "revise": "revise_reasoning"
+            "regenerate": "regenerate_answer"
         })
 
-        workflow.add_edge("revise_reasoning", "regenerate_answer")
         workflow.add_edge("regenerate_answer", "llm_as_a_judge")
         return workflow
 
@@ -399,7 +414,8 @@ class EnhancedVerificationAgent:
             "reasoning_history": [],
             "judge_feedback": {},
             "iteration": 0,
-            "max_retries": 3
+            "max_retries": 3,
+            "judge_history": []
         }
         state = self.workflow.invoke(state)
         return state
@@ -409,9 +425,8 @@ if __name__ == "__main__":
     agent = EnhancedVerificationAgent()
     question_text = "What letter comes next in this series: W, L, C, N, I, T?"
     final_state = agent.run(question_text)
-    # -- ONLY CHANGE BELOW THIS POINT --
+    # Print the final answer (omitting <answer> tags).
     sys.stdout.write("\n===== FINAL ANSWER =====\n")
-    # Force the final answer to be between the special tags ,answer> and </answer>
-    sys.stdout.write(f",answer>{final_state['current_answer']}</answer>\n")
+    sys.stdout.write(f"{final_state['current_answer']}\n")
     sys.stdout.write("========================\n\n")
     sys.stdout.flush()
